@@ -248,13 +248,16 @@ const RuleList = ({
           style: {
             width: 130
           },
+          className: "quantity-column",
           children: "Min quantity"
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("th", {
+          className: "quantity-column",
           children: "Reduction type"
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("th", {
           style: {
             width: 130
           },
+          className: "quantity-column",
           children: "Value"
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("th", {
           style: {
@@ -348,6 +351,7 @@ const RuleListItem = ({
         })
       })
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("td", {
+      className: "quantity-column",
       children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(react_hook_form__WEBPACK_IMPORTED_MODULE_4__.Controller, {
         control: control,
         name: `${ruleKey}.${index}.min_qty`,
@@ -359,6 +363,7 @@ const RuleListItem = ({
         })
       })
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("td", {
+      className: "quantity-column",
       children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(react_hook_form__WEBPACK_IMPORTED_MODULE_4__.Controller, {
         control: control,
         name: `${ruleKey}.${index}.rule.quantity_type`,
@@ -371,6 +376,7 @@ const RuleListItem = ({
         })
       })
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("td", {
+      className: "quantity-column",
       children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(react_hook_form__WEBPACK_IMPORTED_MODULE_4__.Controller, {
         control: control,
         name: `${ruleKey}.${index}.rule.quantity`,
