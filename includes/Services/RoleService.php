@@ -46,6 +46,14 @@ class RoleService
             }
         }
 
+        usort($roles, function (RoleDTO $a, RoleDTO $b) {
+            if ($a->active !== $b->active) {
+                return $b->active <=> $a->active;
+            }
+
+            return $b->rule_count <=> $a->rule_count;
+        });
+
         return $roles;
     }
 
