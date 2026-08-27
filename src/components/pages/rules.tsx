@@ -63,7 +63,9 @@ export function Rules() {
               title="Product Rules"
               createRule={(product) => createRuleFromProduct(product)}
               onSearch={searchProducts}
-              ruleKey="products" />
+              ruleKey="products"
+              startOpen={true}
+              />
             <RulesPanel
               title="Category Rules"
               createRule={(category) => createRuleFromCategory(category)}

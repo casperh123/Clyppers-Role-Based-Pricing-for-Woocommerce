@@ -12,7 +12,8 @@ interface RulesPanelProps<T> {
   createRule: (item: T) => ItemRule,
   onSearch: (search: string) => Promise<T[]>,
   ruleKey: RuleKey,
-  title: string
+  title: string,
+  startOpen?: boolean
 }
 
 interface RuleItem {
@@ -24,7 +25,8 @@ export const RulesPanel = <T extends RuleItem>({
   ruleKey,
   onSearch,
   createRule,
-  title
+  title,
+  startOpen = false
 }: RulesPanelProps<T>) => {
   const [addRule, setAddRule] = useState<boolean>(false);
   const { control } = useFormContext<RoleRules>();
@@ -39,7 +41,7 @@ export const RulesPanel = <T extends RuleItem>({
   }
 
   return (
-    <CollapsibleCard.Root defaultOpen>
+    <CollapsibleCard.Root defaultOpen={startOpen}>
       <CollapsibleCard.Header>
         <div className="row">
           <h2>{title}</h2>
@@ -58,8 +60,12 @@ export const RulesPanel = <T extends RuleItem>({
          { addRule && (
            <AddRule onAdd={onItemAdded} onSearch={onSearch} ruleKey={ruleKey}/>
          )}
-
+          
+         { fields.length == 0 ? (
+          <p>There are not rules yet!</p>
+         ) : (
           <RuleList fields={fields} onRemove={remove} ruleKey={ruleKey}/>
+         )}
         </div>
       </CollapsibleCard.Content>
     </CollapsibleCard.Root>
