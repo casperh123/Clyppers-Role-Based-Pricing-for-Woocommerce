@@ -10,9 +10,9 @@ export const ruleTypeFormValues: {
   label: string;
   value: RuleType;
 }[] = [
-  { label: "Percent", value: "percent" },
-  { label: "Percent add", value: "percent_add" },
-  { label: "Fixed", value: "fixed" },
-  { label: "Fixed add", value: "fixed_add" },
-  { label: "Fixed set", value: "fixed_set" },
+  { label: "Reduce by percent (%)", value: "percent" },
+  { label: "Increase by percent (%)", value: "percent_add" },
+  { label: "Reduce by fixed value", value: "fixed" },
+  { label: "Increase by fixed value", value: "fixed_add" },
+  { label: "Fixed price", value: "fixed_set" },
 ];
