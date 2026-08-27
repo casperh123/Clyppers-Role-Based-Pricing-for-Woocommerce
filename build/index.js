@@ -969,19 +969,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ruleTypeFormValues: () => (/* binding */ ruleTypeFormValues)
 /* harmony export */ });
 const ruleTypeFormValues = [{
-  label: "Percent",
+  label: "Reduce by percent (%)",
   value: "percent"
 }, {
-  label: "Percent add",
+  label: "Increase by percent (%)",
   value: "percent_add"
 }, {
-  label: "Fixed",
+  label: "Reduce by fixed value",
   value: "fixed"
 }, {
-  label: "Fixed add",
+  label: "Increase by fixed value",
   value: "fixed_add"
 }, {
-  label: "Fixed set",
+  label: "Fixed price",
   value: "fixed_set"
 }];
 
