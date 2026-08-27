@@ -18,6 +18,13 @@
     "require-dev": {
         "php-stubs/wordpress-stubs": "^7.0",
         "php-stubs/woocommerce-stubs": "^11.0",
-        "phpunit/php-invoker": "^7.0"
+        "phpunit/php-invoker": "^7.0",
+        "phpunit/phpunit": "^13.3"
+    },
+    "autoload-dev": {
+        "files": [
+            "vendor/php-stubs/wordpress-stubs/wordpress-stubs.php",
+            "vendor/php-stubs/woocommerce-stubs/woocommerce-stubs.php"
+        ]
     }
 }
