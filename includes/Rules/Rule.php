@@ -7,8 +7,8 @@ defined('ABSPATH') || exit;
 class Rule
 {
     public string $type;
-    public string $value;
-    public string $quantity_value;
+    public int $value;
+    public int $quantity_value;
     public string $quantity_value_type;
 
     public const  TYPE_PERCENT = 'percent';
@@ -23,9 +23,9 @@ class Rule
 
     public function __construct(
         string $type,
-        string $value,
-        string $quantity,
-        string $quantity_type,
+        int $value,
+        int $quantity = 0,
+        string $quantity_type = self::TYPE_PERCENT
     )
     {
         $this->type = $type;
