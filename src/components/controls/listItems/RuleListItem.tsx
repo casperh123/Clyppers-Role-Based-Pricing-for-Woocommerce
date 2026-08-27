@@ -59,6 +59,7 @@ export const RuleListItem = ({
             <Input
               value={field.value}
               onChange={field.onChange}
+              type="number"
             />
           )}
         />
@@ -71,6 +72,7 @@ export const RuleListItem = ({
             <Input 
               value={field.value}
               onChange={field.onChange}
+              type="number"
             />
           )}
         />
@@ -96,6 +98,7 @@ export const RuleListItem = ({
             <Input 
               value={field.value}
               onChange={field.onChange}
+              type="number"
             />
           )}
         />

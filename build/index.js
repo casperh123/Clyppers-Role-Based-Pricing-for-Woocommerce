@@ -347,7 +347,8 @@ const RuleListItem = ({
           field
         }) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_ui__WEBPACK_IMPORTED_MODULE_3__.Input, {
           value: field.value,
-          onChange: field.onChange
+          onChange: field.onChange,
+          type: "number"
         })
       })
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("td", {
@@ -359,7 +360,8 @@ const RuleListItem = ({
           field
         }) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_ui__WEBPACK_IMPORTED_MODULE_3__.Input, {
           value: field.value,
-          onChange: field.onChange
+          onChange: field.onChange,
+          type: "number"
         })
       })
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("td", {
@@ -384,7 +386,8 @@ const RuleListItem = ({
           field
         }) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_ui__WEBPACK_IMPORTED_MODULE_3__.Input, {
           value: field.value,
-          onChange: field.onChange
+          onChange: field.onChange,
+          type: "number"
         })
       })
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("td", {
