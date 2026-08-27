@@ -26,9 +26,9 @@ export const RuleList = ({
           )}
           <th>Rule type</th>
           <th style={{width: 130}}>Value</th>
-          <th style={{width: 130}}>Min quantity</th>
-          <th>Reduction type</th>
-          <th style={{width: 130}}>Value</th>
+          <th style={{width: 130}} className="quantity-column">Min quantity</th>
+          <th className="quantity-column">Reduction type</th>
+          <th style={{width: 130}} className="quantity-column">Value</th>
           <th style={{width: 50}}></th>
         </tr>
       </thead>

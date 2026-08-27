@@ -63,7 +63,7 @@ export const RuleListItem = ({
           )}
         />
       </td>
-      <td>
+      <td className="quantity-column">
         <Controller 
           control={control}
           name={`${ruleKey}.${index}.min_qty`}
@@ -75,7 +75,7 @@ export const RuleListItem = ({
           )}
         />
       </td>
-      <td>
+      <td className="quantity-column">
         <Controller 
           control={control}
           name={`${ruleKey}.${index}.rule.quantity_type`}
@@ -88,7 +88,7 @@ export const RuleListItem = ({
           )}
         />
       </td>
-      <td>
+      <td className="quantity-column">
       <Controller 
           control={control}
           name={`${ruleKey}.${index}.rule.quantity`}
