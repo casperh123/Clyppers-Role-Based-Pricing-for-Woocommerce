@@ -479,7 +479,8 @@ const RulesPanel = ({
   ruleKey,
   onSearch,
   createRule,
-  title
+  title,
+  startOpen = false
 }) => {
   const [addRule, setAddRule] = (0,react__WEBPACK_IMPORTED_MODULE_5__.useState)(false);
   const {
@@ -497,7 +498,7 @@ const RulesPanel = ({
     append(createRule(item));
   };
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)(_wordpress_ui__WEBPACK_IMPORTED_MODULE_1__.Root, {
-    defaultOpen: true,
+    defaultOpen: startOpen,
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_wordpress_ui__WEBPACK_IMPORTED_MODULE_2__.Header, {
       children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)("div", {
         className: "row",
@@ -523,7 +524,9 @@ const RulesPanel = ({
           onAdd: onItemAdded,
           onSearch: onSearch,
           ruleKey: ruleKey
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_controls_RuleList__WEBPACK_IMPORTED_MODULE_6__.RuleList, {
+        }), fields.length == 0 ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("p", {
+          children: "There are not rules yet!"
+        }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_controls_RuleList__WEBPACK_IMPORTED_MODULE_6__.RuleList, {
           fields: fields,
           onRemove: remove,
           ruleKey: ruleKey
@@ -699,7 +702,8 @@ function Rules() {
             title: "Product Rules",
             createRule: product => (0,_factories_itemRuleFactory__WEBPACK_IMPORTED_MODULE_8__.createRuleFromProduct)(product),
             onSearch: searchProducts,
-            ruleKey: "products"
+            ruleKey: "products",
+            startOpen: true
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_editingSections_RulesPanel__WEBPACK_IMPORTED_MODULE_6__.RulesPanel, {
             title: "Category Rules",
             createRule: category => (0,_factories_itemRuleFactory__WEBPACK_IMPORTED_MODULE_8__.createRuleFromCategory)(category),
