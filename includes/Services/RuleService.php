@@ -1,0 +1,222 @@
+<?php
+
+namespace ClypperTechnology\RolePricing\Services;
+
+use ClypperTechnology\RolePricing\Rules\ItemRule;
+use ClypperTechnology\RolePricing\Rules\RoleRules;
+use InvalidArgumentException;
+use RuntimeException;
+use WP_Post;
+
+defined( 'ABSPATH' ) || exit;
+
+class RuleService {
+    private array $role_rules;
+    private RoleService $role_service;
+
+    public function __construct( RoleService $role_service )
+    {
+        $this->role_rules = array();
+        $this->role_service = $role_service;
+    }
+
+    /**
+     * Get rule for role
+     *
+     */
+    public function get_rule_by_current_role(): RoleRules | null {
+        $user_role = $this->role_service->get_user_role();
+
+        return $this->get_rule_by_user_role($user_role);
+    }
+
+    /**
+     * @return WP_Post[]
+     */
+    private function get_all_rules(): array {
+        return get_posts([
+            'post_type'   => 'clypper_rbp',
+            'numberposts' => -1,
+            'orderby'     => 'title',
+            'order'       => 'ASC',
+            'post_status' => 'any'
+        ]);
+    }
+
+    public function update_rule( RoleRules $rule ): bool {
+        return $this->save_role_rules($rule);
+    }
+
+    /**
+     * Delete rule
+     */
+    public function delete_rule( string $id ): void {
+        wp_delete_post( $id, true );
+    }
+
+    /**
+     * Copy rules from one role to multiple roles
+     */
+    public function copy_rules( int $from_id, string $type, array $to_ids ): bool {
+        if ( empty( $from_id ) ) {
+            return false;
+        }
+
+        $from_role_rules = $this->get_rules_by_id( $from_id );
+        if ( ! $from_role_rules ) {
+            return false;
+        }
+
+        $success_count = 0;
+
+        foreach ( $to_ids as $to_id ) {
+            $to_role_rules = $this->get_rules_by_id( $to_id );
+            if ( ! $to_role_rules ) {
+                continue;
+            }
+
+            if ( 'category' === $type ) {
+                $to_role_rules->single_categories = $from_role_rules->single_categories;
+            } else {
+                $to_role_rules->products = $from_role_rules->products;
+            }
+
+            if ( $this->save_role_rules( $to_role_rules ) ) {
+                $success_count++;
+            }
+        }
+
+        return $success_count > 0;
+    }
+
+    /**
+     * Add rule
+     *
+     * @param string $role_slug rule name.
+     * @return int Rule ID on success
+     * @throws InvalidArgumentException If rule already exists
+     * @throws RuntimeException If creation fails
+     */
+    public function add_rule(string $role_slug): RoleRules {
+        $rule = [
+            'post_title'   => $role_slug,
+            'post_content' => '',
+            'post_status'  => 'publish',
+            'post_type'    => 'clypper_rbp',
+            'post_author'  => get_current_user_id(),
+        ];
+
+        $rule_id = wp_insert_post($rule);
+
+        if (!$rule_id || is_wp_error($rule_id)) {
+            throw new RuntimeException('Failed to create rule in database');
+        }
+
+        return new RoleRules($rule_id, $role_slug, false);
+    }
+
+    /**
+     * Add product to rule
+     */
+    public function add_product_to_rule($id, $name, $rule ): bool {
+        $rule_id = intval( $rule );
+        $role_rule = $this->get_rules_by_id($rule_id);
+
+        if( ! $role_rule ) {
+            return false;
+        }
+
+        $product = new ItemRule($id, $name);
+
+        $role_rule->add_product($product);
+
+        return $this->save_role_rules($role_rule);
+    }
+
+    /**
+     * Get RoleRules by ID
+     */
+    public function get_rules_by_id(int $rule_id): ?RoleRules {
+        $post = get_post($rule_id);
+
+        if (! $post || $post->post_type !== 'clypper_rbp') {
+            return null;
+        }
+
+        return RoleRules::from_post($post);
+    }
+
+    /**
+     * Save RoleRules back to database
+     */
+    public function save_role_rules(RoleRules $role_rules): bool {
+        $result = wp_update_post([
+            'ID' => $role_rules->id,
+            'post_title' => $role_rules->role_slug,
+            'post_content' => wp_json_encode($role_rules->to_array(), JSON_UNESCAPED_UNICODE),
+            'post_author' => get_current_user_id(),
+        ], true);
+
+        return !is_wp_error($result);
+    }
+
+    /**
+     * Get all RoleRules
+     *
+     * @return RoleRules[]
+     */
+    public function get_all_role_rules(): array {
+        $posts = $this->get_all_rules();
+        $roles = array_map(fn($post) => RoleRules::from_post($post), $posts);
+
+        foreach($roles as $role) {
+            $this->role_rules[$role->role_slug] = $role;
+        }
+
+        return $roles;
+    }
+
+    public function get_rule_by_user_role( string $user_role): ?RoleRules {
+        if(array_key_exists($user_role, $this->role_rules)) {
+            return $this->role_rules[$user_role];
+        }
+
+        $all_rules = $this->get_all_role_rules();
+        $rule = array_find($all_rules, fn( RoleRules $rule ) => $rule->role_slug === $user_role );
+
+        $this->role_rules[$user_role] = $rule;
+
+        return $rule;
+    }
+
+    public function import_products_from_category( int $rule_id, string $category, bool $variations = false ): int
+    {
+        $products = wc_get_products([
+            'category' => [ $category ],
+            'status'   => 'publish',
+            'limit'    => -1,
+        ]);
+
+        $imported = 0;
+
+        foreach ( $products as $product ) {
+            $children = $product->get_children();
+
+            if ( $variations && ! empty( $children ) ) {
+                foreach ( $children as $child_id ) {
+                    $child      = wc_get_product( $child_id );
+                    $attributes = array_filter( $child->get_attributes(), fn( $v ) => is_string( $v ) && strlen( $v ) > 0 );
+                    $name       = implode( ', ', [ $child->get_title(), ...array_map( 'ucfirst', $attributes ) ] );
+
+                    $this->add_product_to_rule( $child_id, $name, $rule_id );
+                }
+            } else {
+                $this->add_product_to_rule( $product->get_id(), $product->get_name(), $rule_id );
+            }
+
+            $imported++;
+        }
+
+        return $imported;
+    }
+}

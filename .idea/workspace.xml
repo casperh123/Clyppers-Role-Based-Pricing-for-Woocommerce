@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="ea3226f5-d6bc-4340-8257-a7a89a45cefe" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/assets/css/rrb2b-dark.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/css/rrb2b.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/crbp.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/js/rrb2b.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/js/rrb2b.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.sh" beforeDir="false" afterPath="$PROJECT_DIR$/build.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/index-rtl.css" beforeDir="false" afterPath="$PROJECT_DIR$/build/index-rtl.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/index.asset.php" beforeDir="false" afterPath="$PROJECT_DIR$/build/index.asset.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/build/index.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/build/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/clypper-role-based-pricing.php" beforeDir="false" afterPath="$PROJECT_DIR$/clypper-role-based-pricing.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/clypper-role-based-pricing-1.0.0.zip" beforeDir="false" afterPath="$PROJECT_DIR$/dist/clypper-role-based-pricing-1.0.0.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/Admin/Admin.php" beforeDir="false" afterPath="$PROJECT_DIR$/includes/Admin/Admin.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/includes/Services/RuleService.php" beforeDir="false" afterPath="$PROJECT_DIR$/includes/Services/RuleService.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/languages/woo-roles-rules-b2b-es_ES.mo" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/languages/woo-roles-rules-b2b-es_ES.po" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/languages/woo-roles-rules-b2b-fr_FR.mo" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/languages/woo-roles-rules-b2b-fr_FR.po" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/languages/woo-roles-rules-b2b-nb_NO.mo" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/languages/woo-roles-rules-b2b-nb_NO.po" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/languages/woo-roles-rules-b2b.pot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/readme.txt" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings" synchronizationState="SYNCHRONIZE">
+    <pharConfigPath>$PROJECT_DIR$/composer.json</pharConfigPath>
+    <execution>
+      <executable />
+    </execution>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="PhpWorkspaceProjectConfiguration" interpreter_name="/bin/php">
+    <include_path>
+      <path value="$USER_HOME$/Development/woocommerce" />
+      <path value="$USER_HOME$/Development/wordpress-develop" />
+      <path value="$PROJECT_DIR$" />
+      <path value="$PROJECT_DIR$/vendor/composer" />
+    </include_path>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2,
+  &quot;fromUser&quot;: false
+}</component>
+  <component name="ProjectId" id="3IK7wYMhk4sfarg8ZZ2HHB2qKx5" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "git-widget-placeholder": "react-frontend",
+    "last_opened_file_path": "/home/casper/GitHub/clypper-plugins/clypper-role-based-pricing",
+    "node.js.detected.package.jshint": "true",
+    "node.js.selected.package.jshint": "",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.pluginManager"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-4abd2a77f808-JavaScript-PS-262.9437.196" />
+        <option value="bundled-php-predefined-a98d8de5180a-9522f28f0b20-com.jetbrains.php.sharedIndexes-PS-262.9437.196" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="ea3226f5-d6bc-4340-8257-a7a89a45cefe" name="Changes" comment="" />
+      <created>1787501646595</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1787501646595</updated>
+      <workItem from="1787501647828" duration="555000" />
+      <workItem from="1787502207308" duration="3378000" />
+      <workItem from="1787744554408" duration="1817000" />
+      <workItem from="1787746853392" duration="81000" />
+      <workItem from="1787746939979" duration="1078000" />
+      <workItem from="1787748416165" duration="1255000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
