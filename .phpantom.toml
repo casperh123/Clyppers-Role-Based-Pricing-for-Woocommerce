@@ -1,5 +1,0 @@
-[indexing]
-extra-files = [
-    "vendor/php-stubs/wordpress-stubs/wordpress-stubs.php",
-    "vendor/php-stubs/woocommerce-stubs/woocommerce-stubs.php",
-]
