@@ -4,8 +4,10 @@ import apiFetch from "@wordpress/api-fetch";
 
 export class CategoryService {
   public static async getCategoriesByName(name: string): Promise<Category[]> {
-     const rule = await apiFetch<Category[]>({
-      path: ApiPath.categoryPathSearch(name)
+    const query = encodeURIComponent(name);  
+
+    const rule = await apiFetch<Category[]>({
+      path: ApiPath.categoryPathSearch(query)
     });
 
     return rule;
