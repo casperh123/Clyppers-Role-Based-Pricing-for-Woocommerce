@@ -77,7 +77,7 @@ class Rule
             return null;
         }
 
-        return round($calculated_price, wc_get_price_decimals());
+        return round($calculated_price, wc_get_price_decimals() ?? 2);
     }
 
     private function getApplicableRule(int $minimum_quantity, int $quantity): string {

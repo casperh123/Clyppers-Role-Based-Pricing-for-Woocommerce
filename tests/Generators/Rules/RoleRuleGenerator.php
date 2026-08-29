@@ -45,7 +45,7 @@ class RoleRuleGenerator
         $role_rules = self::empty();
 
         $role_rules->products = $product_rules;
-        $role_rules->categories = $category_rules;
+        $role_rules->single_categories = $category_rules;
 
         return $role_rules;
     }
