@@ -1,1 +1,1 @@
-{"version":2,"defects":[],"times":{"RuleTest::testPercentageReduction":0,"RuleTest::testPercentageAdd":0,"RuleTest::testFixed":0,"RuleTest::testFixedAdd":0,"RuleTest::testFixedSet":0}}
+{"version":2,"defects":[],"times":{"RuleTest::testPercentageReduction":0,"RuleTest::testPercentageAdd":0,"RuleTest::testFixed":0,"RuleTest::testFixedAdd":0,"RuleTest::testFixedSet":0,"Rules\\RuleTest::testPercentageReduction":0,"Rules\\RuleTest::testPercentageAdd":0,"Rules\\RuleTest::testFixed":0,"Rules\\RuleTest::testFixedAdd":0,"Rules\\RuleTest::testFixedSet":0}}
