@@ -36,7 +36,9 @@ export const RuleListItem = ({
       <td>{rule.name}</td>
 
       {ruleKey === "products" && (
-        <td>{rule.price}</td>
+        <td>
+          <span dangerouslySetInnerHTML={{ __html: rule.price_html ?? "" }} />
+        </td>
       )}
       <td>
         <Controller 

@@ -7,7 +7,7 @@ export const createRuleFromProduct = (product: Product): ItemRule => {
   return {
     id: product.id,
     name: product.name,
-    price: product.price,
+    price_html: product.price_html,
     rule: itemRule(),
     min_qty: 0,
     image_url: product.image_url
@@ -20,7 +20,7 @@ export const createRuleFromCategory = (category: Category): ItemRule => {
     name: category.name,
     rule: itemRule(),
     min_qty: 0,
-    image_url: category.image_url
+    image_url: category.image.src
   }
 }
 

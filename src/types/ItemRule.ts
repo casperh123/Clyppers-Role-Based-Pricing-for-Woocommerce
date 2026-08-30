@@ -6,5 +6,5 @@ export interface ItemRule {
   rule: PricingRule;
   min_qty: number;
   image_url: string;
-  price?: number;
+  price_html?: string;
 }
