@@ -10,17 +10,16 @@ import { ProductService } from "@/services/productService";
 import { createRuleFromCategory, createRuleFromProduct } from "@/factories/itemRuleFactory";
 import { CategoryService } from "@/services/categoryService";
 
-
 export function Rules() {
   const { id } = useParams<{ id: string }>();
   const  numericId = id ? parseInt(id) : 0;
   const [rule, setRule] = useState<RoleRules>();
   const [isLoading, setIsLoading] = useState(true);
-  const [hasPendingChanges, setPendingChanges] = useState(false);
-  const [isPending, setTransition] = useTransition();
+  const [isSaving, setTransition] = useTransition();
   const navigate = useNavigate();
 
   const methods = useForm<RoleRules>();
+  const { isDirty } = methods.formState;
 
   useEffect(() => {
     const load = async () => {
@@ -63,8 +62,8 @@ export function Rules() {
           </div>
           <div className="roles-list">
             <div>
-              <Button type="submit" variant="primary" disabled={isPending}>
-                {isPending ? "Saving…" : "Save"}
+              <Button type="submit" variant={isDirty ? "primary" : "secondary"}  disabled={isSaving || !isDirty}>
+                {isSaving ? "Saving…" : "Save"}
               </Button>
             </div>
             <RulesPanel 

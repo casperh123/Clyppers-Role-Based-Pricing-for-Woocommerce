@@ -654,10 +654,12 @@ function Rules() {
   const numericId = id ? parseInt(id) : 0;
   const [rule, setRule] = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)();
   const [isLoading, setIsLoading] = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(true);
-  const [hasPendingChanges, setPendingChanges] = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(false);
-  const [isPending, setTransition] = (0,react__WEBPACK_IMPORTED_MODULE_1__.useTransition)();
+  const [isSaving, setTransition] = (0,react__WEBPACK_IMPORTED_MODULE_1__.useTransition)();
   const navigate = (0,react_router_dom__WEBPACK_IMPORTED_MODULE_2__.useNavigate)();
   const methods = (0,react_hook_form__WEBPACK_IMPORTED_MODULE_5__.useForm)();
+  const {
+    isDirty
+  } = methods.formState;
   (0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(() => {
     const load = async () => {
       const rule = await _services_ruleService__WEBPACK_IMPORTED_MODULE_0__.RuleService.getRule(numericId);
@@ -702,9 +704,9 @@ function Rules() {
           children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)("div", {
             children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.Button, {
               type: "submit",
-              variant: "primary",
-              disabled: isPending,
-              children: isPending ? "Saving…" : "Save"
+              variant: isDirty ? "primary" : "secondary",
+              disabled: isSaving || !isDirty,
+              children: isSaving ? "Saving…" : "Save"
             })
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_editingSections_RulesPanel__WEBPACK_IMPORTED_MODULE_6__.RulesPanel, {
             title: "Product Rules",
