@@ -44,8 +44,8 @@ class Admin {
   {
       add_submenu_page(
           'woocommerce',
-          __( 'Roles & Rules B2B', 'clypper-role-based-pricing' ),
-          __( 'Roles & Rules B2B', 'clypper-role-based-pricing' ),
+          __( 'Role Rules', 'clypper-role-based-pricing' ),
+          __( 'Role Rules', 'clypper-role-based-pricing' ),
           'manage_woocommerce',
           'crbp',
           function (): void {
