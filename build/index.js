@@ -146,25 +146,31 @@ const ItemSearch = ({
   addedItems = []
 }) => {
   const [items, setItems] = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)([]);
-  const [options, setOptions] = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)([]);
+  const options = items.map(displayItem);
   const [isPending, setTransition] = (0,react__WEBPACK_IMPORTED_MODULE_1__.useTransition)();
   const onInputChange = inputValue => {
     setTransition(async () => {
-      const results = await searchItems(inputValue);
-      setItems(results);
-      setOptions(results.map(displayItem));
+      setItems(await searchItems(inputValue));
     });
+  };
+  const getItem = value => {
+    return items.find(p => String(p.id) === value);
+  };
+  const selectItem = item => {
+    if (!item) return;
+    onItemAdded(item);
   };
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_0__.ComboboxControl, {
     label: "Search for product",
     options: options,
     onFilterValueChange: onInputChange,
+    onChange: value => selectItem(getItem(value ?? "")),
     isLoading: isPending,
     __experimentalRenderItem: ({
       item: option
     }) => {
-      const item = items.find(p => String(p.id) === option.value);
-      if (!item) return null;
+      const item = getItem(option.value);
+      if (!item) return;
       const isAdded = addedItems.some(element => item.id == element.id);
       return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
         style: {
