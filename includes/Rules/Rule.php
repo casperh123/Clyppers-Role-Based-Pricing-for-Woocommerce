@@ -72,7 +72,7 @@ class Rule
             default => null
         };
 
-        // If calculated price is 0 and it wasn't intentionally set to 0, return original price
+        // If calculated price is below 0 and it wasn't intentionally set to 0, return original price
         if ($calculated_price <= 0) {
             return null;
         }
@@ -104,7 +104,7 @@ class Rule
     public static function from_array( array $rule ) : Rule {
         return new Rule(
             $rule['type'] ?? "",
-            $rule['value'] ?? "",
+            $rule['value'] ?? 0,
             $rule['quantity'] ?? "",
             $rule['quantity_type'] ?? ""
         );

@@ -20,11 +20,13 @@ class RuleGenerator
         );
     }
 
-    public static function with($type, $value): Rule
+    public static function with($type, $value, $quantity = 0, $quantity_type = Rule::TYPE_PERCENT): Rule
     {
         return new Rule(
             $type,
-            $value
+            $value,
+            $quantity,
+            $quantity_type
         );
     }
 
