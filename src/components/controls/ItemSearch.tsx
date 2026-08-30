@@ -25,26 +25,35 @@ export const ItemSearch = <T extends SearchItem>({
   addedItems = [],
 }: ItemSearchProps<T>) => {
   const [items, setItems] = useState<T[]>([]);
-  const [options, setOptions] = useState<DisplayItem[]>([]);
+  const options = items.map(displayItem);
   const [isPending, setTransition] = useTransition();
+
 
   const onInputChange = (inputValue: string) => {
     setTransition(async () => {
-      const results = await searchItems(inputValue);
-      setItems(results);
-      setOptions(results.map(displayItem));
+      setItems(await searchItems(inputValue));
     })
   };
+
+  const getItem = (value?: string) => {
+    return items.find(p => String(p.id) === value);
+  }
+
+  const selectItem = (item?: T) => {
+    if(!item) return;
+    onItemAdded(item);
+  }
 
   return (
     <ComboboxControl
       label="Search for product"
       options={options}
       onFilterValueChange={onInputChange}
+      onChange={(value) => selectItem(getItem(value ?? ""))}
       isLoading={isPending}
       __experimentalRenderItem={({ item: option }) => {
-        const item = items.find(p => String(p.id) === option.value);
-        if (!item) return null;
+        const item = getItem(option.value);
+        if (!item) return;
 
         const isAdded = addedItems.some(element => item.id == element.id);
 
