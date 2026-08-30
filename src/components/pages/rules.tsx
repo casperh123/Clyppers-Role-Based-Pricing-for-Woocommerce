@@ -1,8 +1,8 @@
 import { RuleService } from "@/services/ruleService";
 import { RoleRules } from "@/types/roleRules";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import {Button, Icon, Spinner } from '@wordpress/components';
+import { Button, Icon, Spinner } from '@wordpress/components';
 import { arrowLeft } from "@wordpress/icons";
 import { FormProvider, useForm } from "react-hook-form";
 import { RulesPanel } from "../editingSections/RulesPanel";
@@ -16,6 +16,7 @@ export function Rules() {
   const  numericId = id ? parseInt(id) : 0;
   const [rule, setRule] = useState<RoleRules>();
   const [isLoading, setIsLoading] = useState(true);
+  const [isPending, setTransition] = useTransition();
   const navigate = useNavigate();
 
   const methods = useForm<RoleRules>();
@@ -34,7 +35,9 @@ export function Rules() {
   }, [numericId])
   
   const onSubmit = async (rule: RoleRules) => {
-      await RuleService.updateRules(rule);
+      setTransition(() => { 
+        RuleService.updateRules(rule); 
+      });
   }
 
   if (isLoading || !rule) {
@@ -58,7 +61,11 @@ export function Rules() {
             <h1>{rule?.role_name}</h1>
           </div>
           <div className="roles-list">
-            <Button type="submit">Save</Button>
+            <div>
+              <Button type="submit" variant="primary" disabled={isPending}>
+                {isPending ? "Saving…" : "Save"}
+              </Button>
+            </div>
             <RulesPanel 
               title="Product Rules"
               createRule={(product) => createRuleFromProduct(product)}
