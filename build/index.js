@@ -654,6 +654,7 @@ function Rules() {
   const numericId = id ? parseInt(id) : 0;
   const [rule, setRule] = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)();
   const [isLoading, setIsLoading] = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(true);
+  const [hasPendingChanges, setPendingChanges] = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(false);
   const navigate = (0,react_router_dom__WEBPACK_IMPORTED_MODULE_2__.useNavigate)();
   const methods = (0,react_hook_form__WEBPACK_IMPORTED_MODULE_5__.useForm)();
   (0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(() => {

@@ -16,6 +16,7 @@ export function Rules() {
   const  numericId = id ? parseInt(id) : 0;
   const [rule, setRule] = useState<RoleRules>();
   const [isLoading, setIsLoading] = useState(true);
+  const [hasPendingChanges, setPendingChanges] = useState(false);
   const navigate = useNavigate();
 
   const methods = useForm<RoleRules>();
