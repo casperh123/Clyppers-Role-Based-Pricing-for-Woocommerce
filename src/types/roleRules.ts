@@ -1,6 +1,6 @@
-import { CategoryRule } from "./categoryRule";
+import { ItemRule } from "./ItemRule";
 import { PricingRule } from "./pricingRule";
-import { ProductRule } from "./productRule";
+
 
 
 
@@ -12,6 +12,6 @@ export interface RoleRules {
   global_rule: PricingRule;
   category_rule: PricingRule;
   categories: number[];
-  products: ProductRule[];
-  single_categories: CategoryRule[];
+  products: ItemRule[];
+  single_categories: ItemRule[];
 }

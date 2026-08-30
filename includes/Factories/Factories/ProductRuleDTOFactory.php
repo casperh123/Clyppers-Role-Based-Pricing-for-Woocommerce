@@ -25,7 +25,7 @@ final class ProductRuleDTOFactory
         return new ProductRuleDTO(
             $rule,
             $image_url,
-            (float)$product->get_price()
+            wc_price( (float)$product->get_price() )
         );
     }
 

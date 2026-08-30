@@ -326,7 +326,11 @@ const RuleListItem = ({
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("td", {
       children: rule.name
     }), ruleKey === "products" && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("td", {
-      children: rule.price
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("span", {
+        dangerouslySetInnerHTML: {
+          __html: rule.price_html ?? ""
+        }
+      })
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("td", {
       children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(react_hook_form__WEBPACK_IMPORTED_MODULE_4__.Controller, {
         control: control,
@@ -743,7 +747,7 @@ const createRuleFromProduct = product => {
   return {
     id: product.id,
     name: product.name,
-    price: product.price,
+    price_html: product.price_html,
     rule: itemRule(),
     min_qty: 0,
     image_url: product.image_url
@@ -755,7 +759,7 @@ const createRuleFromCategory = category => {
     name: category.name,
     rule: itemRule(),
     min_qty: 0,
-    image_url: category.image_url
+    image_url: category.image.src
   };
 };
 const itemRule = () => {

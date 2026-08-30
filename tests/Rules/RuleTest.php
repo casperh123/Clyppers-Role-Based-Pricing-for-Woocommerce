@@ -89,5 +89,5 @@
 
             // Assert
             $this->assertEquals($fixed, $caclculated_price);
-        f
+        }
     }

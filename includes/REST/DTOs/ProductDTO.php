@@ -8,18 +8,18 @@ class ProductDTO
 {
     public int $id;
     public string $name;
-    public float $price;
+    public string $price_html;
     public string $image_url;
 
     public function __construct(
         string $id,
         string $name,
-        float $price,
+        string $price_html,
         string $url
     ) {
         $this->id = $id;
         $this->name = $name;
-        $this->price = $price;
+        $this->price_html = $price_html;
         $this->image_url = $url;
     }
 
@@ -27,7 +27,7 @@ class ProductDTO
         return new self(
             $product->get_id(),
             $product->get_title(),
-            floatval($product->get_price()),
+            wc_price( floatval($product->get_price()) ),
             wp_get_attachment_image_url( $product->get_image_id(), 'thumbnail' )
         );
     }

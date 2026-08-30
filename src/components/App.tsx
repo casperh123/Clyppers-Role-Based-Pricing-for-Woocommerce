@@ -1,4 +1,4 @@
-import { HashRouter, Routes, Route, useParams, useNavigate } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import { Roles } from './pages/roles';
 import { Rules } from './pages/rules';
 
