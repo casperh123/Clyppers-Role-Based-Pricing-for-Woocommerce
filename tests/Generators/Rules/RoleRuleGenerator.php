@@ -2,6 +2,7 @@
 
 namespace Generators\Rules;
 use ClypperTechnology\RolePricing\Rules\RoleRules;
+use ClypperTechnology\RolePricing\Rules\Rule;
 
 class RoleRuleGenerator
 {
@@ -31,7 +32,7 @@ class RoleRuleGenerator
 
     public static function empty(bool $active = true) {
         $id = random_int(1, 10_000);
-        $role_slug = "slug_{${$id}}";
+        $role_slug = "slug_{$id}";
         $is_active = $active;
 
         return new RoleRules(
@@ -41,11 +42,20 @@ class RoleRuleGenerator
         );
     }
 
-    public static function withItemRules(array $product_rules, array $category_rules): RoleRules {
+    public static function withItemRules(
+        array  $product_rules,
+        array  $singe_category_rules,
+        ?Rule  $global_rule = null,
+        ?Rule $category_rule = null,
+        array $categories = []
+    ): RoleRules {
         $role_rules = self::empty();
 
+        $role_rules->global_rule = $global_rule;
+        $role_rules->categories = $categories;
+        $role_rules->category_rule = $category_rule;
         $role_rules->products = $product_rules;
-        $role_rules->single_categories = $category_rules;
+        $role_rules->single_categories = $singe_category_rules;
 
         return $role_rules;
     }
