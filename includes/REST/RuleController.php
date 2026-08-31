@@ -52,42 +52,6 @@ class RuleController extends \WP_REST_Controller
                 'permission_callback' => [ $this, 'permissions_check' ],
             ],
         ]);
-
-        register_rest_route( $this->namespace, '/' . $this->resource_name . '/copy', [
-            [
-                'methods'             => \WP_REST_Server::CREATABLE,
-                'callback'            => [ $this, 'copy_rules' ],
-                'permission_callback' => [ $this, 'permissions_check' ],
-                'args'                => [
-                    'type' => [
-                        'required' => true,
-                        'type'     => 'string',
-                        'enum'     => [ 'product', 'category' ],
-                    ],
-                    'from' => [
-                        'required' => true,
-                        'type'     => 'integer',
-                    ],
-                    'to' => [
-                        'required' => true,
-                        'type'     => 'array',
-                        'items'    => [ 'type' => 'integer' ],
-                    ],
-                ],
-            ]
-        ]);
-
-        register_rest_route( $this->namespace, '/' . $this->resource_name . '/(?P<id>\d+)/products/import', [
-            [
-                'methods'             => \WP_REST_Server::CREATABLE,
-                'callback'            => [ $this, 'import_products_from_category' ],
-                'permission_callback' => [ $this, 'permissions_check' ],
-                'args'                => [
-                    'category'   => [ 'required' => true, 'type' => 'string', 'sanitize_callback' => 'sanitize_text_field' ],
-                    'variations' => [ 'required' => false, 'type' => 'boolean', 'default' => false ],
-                ],
-            ]
-        ]);
     }
 
     public function permissions_check( $request ): \WP_Error|bool
@@ -125,31 +89,5 @@ class RuleController extends \WP_REST_Controller
         $this->rule_service->update_rule($rule);
 
         return new \WP_REST_Response(null, 204);
-    }
-
-    public function copy_rules( $request ): \WP_REST_Response
-    {
-        $this->rule_service->copy_rules(
-            $request->get_param( 'from' ),
-            $request->get_param( 'type' ),
-            $request->get_param( 'to' )
-        );
-
-        return new \WP_REST_Response( null, 204 );
-    }
-
-    public function import_products_from_category( $request ): \WP_REST_Response|\WP_Error
-    {
-        $imported = $this->rule_service->import_products_from_category(
-            $request->get_param( 'id' ),
-            $request->get_param( 'category' ),
-            $request->get_param( 'variations' ),
-        );
-
-        if ( ! $imported ) {
-            return new \WP_Error( 'no_products', 'No products found in this category.', [ 'status' => 404 ] );
-        }
-
-        return new \WP_REST_Response( [ 'imported' => $imported ], 200 );
     }
 }
