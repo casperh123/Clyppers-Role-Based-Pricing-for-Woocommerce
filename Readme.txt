@@ -1,86 +1,79 @@
-=== Clypper's Role Based Pricing ===
-Contributors: casperholten
-Tags: woocommerce, b2b, role based pricing, wholesale, dynamic pricing
+=== Clypper's Role Based Pricing for WooCommerce ===
+Contributors: Casper Holten
+Tags: woocommerce, b2b, wholesale pricing, role based pricing, dynamic pricing
 Requires at least: 6.8
 Tested up to: 7.1
-Requires PHP: 8.2
+Requires PHP: 8.3
 WC requires at least: 9.6
 WC tested up to: 11.0.1
 Stable tag: 1.0.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-Set tailored pricing per WordPress user role, product, and category in WooCommerce, with quantity-break discounts for B2B and B2C stores.
+Set different prices based on WordPress user role, and offer lower prices at higher quantities.
 
 == Description ==
 
-Clypper's Role Based Pricing lets you tailor product prices to who's buying, not just what they're buying. Define pricing rules per WordPress user role (including a built-in Guest role for logged-out visitors) and apply them at whatever level of precision your store needs.
+This plugin lets you set different prices for different WordPress user roles, and set quantity-based price breaks on top of that.
 
-= How pricing rules are chosen =
+You can set pricing at three levels:
 
-For each role, rules are checked in order of specificity, and the most specific match wins:
+* For a whole role, across all products
+* For a role, on one category
+* For a role, on one product
 
-1. **Product rule** — a price adjustment for one specific product
-2. **Category rule** — a price adjustment for one specific category
-3. **General category rule** — applies across a broader set of selected categories
-4. **Global rule** — a fallback that applies to everything else
+If more than one applies to a product, the most specific one is used: product rule first, then category rule, then the role's general rule.
 
-= Pricing rule types =
+Each rule can be a percent discount, percent markup, fixed amount discount, fixed amount markup, or a fixed price.
 
-Each rule can be set up as:
+Each rule can also have a minimum quantity. Once a customer's cart quantity for that item reaches it, a different price applies. This price is shown on the product page before the customer reaches that quantity.
 
-* Percent discount or percent markup
-* Fixed amount discount or fixed amount markup
-* A fixed set price
+There's a built-in "Guest" role for pricing logged-out visitors.
 
-= Quantity break pricing =
+= Dashboard =
 
-Any rule can include a quantity threshold, letting you offer a better rate once a customer's cart quantity for that item reaches a set amount — shown to customers as a preview on the product page before they even reach that quantity.
-
-= Admin tools =
-
-* Enable/disable pricing per role from a simple dashboard
-* Search and add individual products or categories to a role's rules
-* Copy an existing role's rules to one or more other roles in bulk
-* Bulk-import all products from a WooCommerce category into a role's rules, with an option to include product variations
+* Turn pricing on/off per role
+* Add products or categories to a role's rules
+* Copy a role's rules to other roles
+* Import all products from a category into a role's rules, with or without variations
 
 = Compatibility =
 
-Built with WooCommerce's High-Performance Order Storage (HPOS) in mind and integrates directly with core WooCommerce pricing filters, so adjusted prices display correctly across the shop, product pages, and cart.
+Works with WooCommerce HPOS. Prices update on the shop page, product pages, and cart.
 
 == Installation ==
 
-1. Upload the plugin files to the `/wp-content/plugins/clypper-role-based-pricing` directory, or install the plugin through the WordPress plugins screen directly.
-2. Activate the plugin through the 'Plugins' screen in WordPress.
+1. Upload the plugin files to `/wp-content/plugins/clypper-role-based-pricing`, or install through the WordPress plugins screen.
+2. Activate the plugin.
 3. Make sure WooCommerce is installed and active.
-4. Go to WooCommerce > Roles & Rules B2B to start configuring rules per role.
+4. Go to WooCommerce > Roles Rules to set up pricing.
 
 == Frequently Asked Questions ==
 
-= Does this work for logged-out visitors? =
+= Can I set pricing for logged-out visitors? =
 
-Yes. A built-in "Guest" role lets you set pricing for customers who aren't logged in, separate from any registered user role.
+Yes, using the built-in "Guest" role.
 
 = What happens if a product matches more than one rule? =
 
-The most specific rule always wins: a product-level rule overrides a category-level rule, which overrides a general-category rule, which overrides the role's global fallback rule.
+The most specific rule wins: product rule, then category rule, then the role's general rule.
 
-= Does this affect product variations? =
+= Does this work with product variations? =
 
-Yes, variations are supported, including when bulk-importing products from a category.
+Yes, including when bulk-importing a category.
 
-= Can I copy pricing rules between roles? =
+= Can I copy pricing from one role to another? =
 
-Yes, you can copy either the product rules or category rules from one role to any number of other roles at once.
+Yes.
 
-= Does this require WooCommerce? =
+= Do I need WooCommerce? =
 
-Yes, WooCommerce must be installed and active.
+Yes.
 
 == Screenshots ==
 
-1. Roles overview showing active status and rule counts per role.
-2. Editing product and category rules for a role.
+1. Roles overview with pricing status and rule counts.
+2. Product and category pricing for a role.
 
 == Changelog ==
 
