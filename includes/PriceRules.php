@@ -7,7 +7,7 @@
 
 namespace ClypperTechnology\RolePricing;
 
-use ClypperTechnology\RolePricing\Rules\ApplicableRule;
+use ClypperTechnology\RolePricing\Rules\ItemRule;
 use ClypperTechnology\RolePricing\Rules\RoleRules;
 use ClypperTechnology\RolePricing\Services\RuleService;use WC_Product;
 
@@ -61,7 +61,7 @@ class PriceRules
         $rule = $this->rule_service->get_rule_by_current_role();
         $applicable_rule = $this->get_applicable_rule($rule, $product);
 
-        if (!$applicable_rule || !$applicable_rule->rule->has_quantity_value()) {
+        if (!$applicable_rule || !$applicable_rule->quantity_rule->has_value()) {
             return $price_html;
         }
 
@@ -179,11 +179,11 @@ class PriceRules
 
         $applicable_rule = $this->get_applicable_rule($rule, $product);
 
-        if (!$applicable_rule || !$applicable_rule->rule->quantity_value) {
+        if (!$applicable_rule || !$applicable_rule->quantity_rule->has_value()) {
             return;
         }
 
-        $message = $applicable_rule->quantityReductionMessage();
+        $message = $applicable_rule->quantity_reduction_message();
 
         if ($shortened_message) {
             ?>
@@ -314,7 +314,7 @@ class PriceRules
         return $applicable_rule?->calculatePrice($price_new, $cart_qty);
     }
 
-    private function get_applicable_rule(RoleRules $rule, $product): ?ApplicableRule
+    private function get_applicable_rule(RoleRules $rule, $product): ?ItemRule
     {
         $category_ids = $this->get_category_ids($product);
 
