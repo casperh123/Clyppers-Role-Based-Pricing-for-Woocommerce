@@ -11,12 +11,14 @@ class ItemRuleGenerator
         $id = random_int(1, 10_000);
         $name = "name_{$id}";
         $rule = RuleGenerator::Random();
+        $quantity_rule = RuleGenerator::Random();
         $min_qty = random_int(0, 100);
 
         return new ItemRule(
             $id,
             $name,
             $rule,
+            $quantity_rule,
             $min_qty
         );
     }
@@ -36,12 +38,24 @@ class ItemRuleGenerator
         return $rules;
     }
 
-    public static function with(int $id, string $name, ?Rule $rule = null, int $min_qty = 0): ItemRule
+    public static function with(int $id, string $name, ?Rule $rule = null, ?Rule $quantity_rule = null, int $min_qty = 0): ItemRule
     {
         return new ItemRule(
             $id,
             $name,
-            $rule,
+            $rule ?? new Rule(Rule::TYPE_PERCENT, 0),
+            $quantity_rule ?? new Rule(Rule::TYPE_PERCENT, 0),
+            $min_qty
+        );
+    }
+
+    public static function with_rules(?Rule $rule = null, ?Rule $quantity_rule = null, int $min_qty = 0): ItemRule
+    {
+        return new ItemRule(
+            -1,
+            "rule",
+            $rule ?? new Rule(Rule::TYPE_PERCENT, 0),
+            $quantity_rule ?? new Rule(Rule::TYPE_PERCENT, 0),
             $min_qty
         );
     }

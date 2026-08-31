@@ -378,7 +378,7 @@ const RuleListItem = ({
       className: "quantity-column",
       children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(react_hook_form__WEBPACK_IMPORTED_MODULE_4__.Controller, {
         control: control,
-        name: `${ruleKey}.${index}.rule.quantity_type`,
+        name: `${ruleKey}.${index}.quantity_rule.type`,
         render: ({
           field
         }) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.SelectControl, {
@@ -391,7 +391,7 @@ const RuleListItem = ({
       className: "quantity-column",
       children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(react_hook_form__WEBPACK_IMPORTED_MODULE_4__.Controller, {
         control: control,
-        name: `${ruleKey}.${index}.rule.quantity`,
+        name: `${ruleKey}.${index}.quantity_rule.value`,
         render: ({
           field
         }) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_ui__WEBPACK_IMPORTED_MODULE_3__.Input, {
@@ -755,6 +755,7 @@ const createRuleFromProduct = product => {
     name: product.name,
     price_html: product.price_html,
     rule: itemRule(),
+    quantity_rule: itemRule(),
     min_qty: 0,
     image_url: product.image_url
   };
@@ -764,6 +765,7 @@ const createRuleFromCategory = category => {
     id: category.id,
     name: category.name,
     rule: itemRule(),
+    quantity_rule: itemRule(),
     min_qty: 0,
     image_url: category.image.src
   };
@@ -771,9 +773,7 @@ const createRuleFromCategory = category => {
 const itemRule = () => {
   return {
     type: 'percent',
-    value: '0',
-    quantity: '0',
-    quantity_type: 'percent'
+    value: '0'
   };
 };
 
@@ -816,7 +816,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   ProductService: () => (/* binding */ ProductService)
 /* harmony export */ });
-/* harmony import */ var _shared_apiPaths__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../shared/apiPaths */ "./src/shared/apiPaths.ts");
+/* harmony import */ var _shared_apiPaths__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/shared/apiPaths */ "./src/shared/apiPaths.ts");
 /* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/api-fetch */ "@wordpress/api-fetch");
 /* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_1__);
 
@@ -843,17 +843,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   RoleService: () => (/* binding */ RoleService)
 /* harmony export */ });
-/* harmony import */ var _shared_apiPaths__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../shared/apiPaths */ "./src/shared/apiPaths.ts");
+/* harmony import */ var _shared_apiPaths__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/shared/apiPaths */ "./src/shared/apiPaths.ts");
 /* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/api-fetch */ "@wordpress/api-fetch");
 /* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_1__);
 
 
 class RoleService {
   static async getRoles() {
-    const response = await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_1___default()({
+    return _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_1___default()({
       path: _shared_apiPaths__WEBPACK_IMPORTED_MODULE_0__.ApiPath.rolesPath()
     });
-    return response;
   }
   static async setRoleActive(role, active) {
     role.active = active;
@@ -861,12 +860,11 @@ class RoleService {
     return this.getRoles();
   }
   static async updateRole(role) {
-    const id = await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_1___default()({
+    return _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_1___default()({
       path: _shared_apiPaths__WEBPACK_IMPORTED_MODULE_0__.ApiPath.rolesPath(),
       method: "PATCH",
       data: role
     });
-    return id;
   }
 }
 
@@ -882,7 +880,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   RuleService: () => (/* binding */ RuleService)
 /* harmony export */ });
-/* harmony import */ var _shared_apiPaths__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../shared/apiPaths */ "./src/shared/apiPaths.ts");
+/* harmony import */ var _shared_apiPaths__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/shared/apiPaths */ "./src/shared/apiPaths.ts");
 /* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/api-fetch */ "@wordpress/api-fetch");
 /* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_1__);
 
@@ -890,29 +888,26 @@ __webpack_require__.r(__webpack_exports__);
 class RuleService {
   static resource = _shared_apiPaths__WEBPACK_IMPORTED_MODULE_0__.ApiPath.rulesPath();
   static async getRule(id) {
-    const rule = await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_1___default()({
+    return _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_1___default()({
       path: _shared_apiPaths__WEBPACK_IMPORTED_MODULE_0__.ApiPath.rulePath(id)
     });
-    return rule;
   }
   static async getAllRules() {
-    const rules = await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_1___default()({
+    return _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_1___default()({
       path: this.resource
     });
-    return rules;
   }
   static async addRules(slug) {
-    const id = await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_1___default()({
+    return _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_1___default()({
       path: this.resource,
       method: "POST",
       data: {
         slug: slug
       }
     });
-    return id;
   }
   static async updateRules(rule) {
-    await _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_1___default()({
+    return _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_1___default()({
       path: _shared_apiPaths__WEBPACK_IMPORTED_MODULE_0__.ApiPath.rulePath(rule.id),
       method: "POST",
       data: rule
@@ -932,7 +927,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   ApiPath: () => (/* binding */ ApiPath)
 /* harmony export */ });
-/* harmony import */ var _types_apiBases__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../types/apiBases */ "./src/types/apiBases.ts");
+/* harmony import */ var _types_apiBases__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/types/apiBases */ "./src/types/apiBases.ts");
 
 class ApiPath {
   static rulesPath() {
