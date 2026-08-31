@@ -62,6 +62,11 @@ class RuleController extends \WP_REST_Controller
     public function get_item($request): \WP_REST_Response {
         $id = $request->get_param("id");
         $rule = $this->rule_service->get_rules_by_id($id);
+
+        if(!$rule) {
+            return new \WP_REST_Response(null, 404);
+        }
+
         $rule_DTO = RoleRulesDTOFactory::from_rules($rule);
 
         return new \WP_REST_Response($rule_DTO->to_array(), 200);
