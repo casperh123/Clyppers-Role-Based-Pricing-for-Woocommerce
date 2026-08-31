@@ -37,7 +37,7 @@
             $categories = 100;
             $products = ItemRuleGenerator::RandomCollection($products);
             $single_categories = ItemRuleGenerator::RandomCollection($categories);
-            $global_rule = ItemRuleGenerator::with_rules(RuleGenerator::with(Rule::TYPE_FIXED_SET, 100));
+            $global_rule = RuleGenerator::with(Rule::TYPE_FIXED_SET, 100);
             $role_rule = RoleRuleGenerator::withItemRules($products, $single_categories, $global_rule);
 
             // Act
@@ -56,8 +56,8 @@
             $category_ids = [ 100 ];
             $products = ItemRuleGenerator::RandomCollection($products);
             $single_categories = ItemRuleGenerator::RandomCollection($categories);
-            $category_rule = ItemRuleGenerator::with_rules(RuleGenerator::with(Rule::TYPE_FIXED_SET, 100));
-            $global_rule = ItemRuleGenerator::Random();
+            $category_rule = RuleGenerator::with(Rule::TYPE_FIXED_SET, 100);
+            $global_rule = RuleGenerator::Random();
             $role_rule = RoleRuleGenerator::withItemRules($products, $single_categories, $global_rule, $category_rule, $category_ids);
 
             // Act
@@ -75,7 +75,7 @@
             $rule_price = 999;
             $rule = RuleGenerator::with(Rule::TYPE_FIXED_SET, $rule_price);
             $product_rule = ItemRuleGenerator::with_rules($rule);
-            $global_rule = ItemRuleGenerator::Random();
+            $global_rule = RuleGenerator::Random();
             $role_rules = RoleRuleGenerator::withItemRules([$product_id => $product_rule], [], $global_rule);
 
             // Act
@@ -91,8 +91,8 @@
             $category_ids = [100];
 
             $product_rule = ItemRuleGenerator::with($product_id, "test_product", RuleGenerator::with(Rule::TYPE_FIXED_SET, 10));
-            $category_rule = ItemRuleGenerator::with_rules(RuleGenerator::with(Rule::TYPE_FIXED_SET, 50));
-            $global_rule = ItemRuleGenerator::with_rules(RuleGenerator::with(Rule::TYPE_FIXED_SET, 100));
+            $category_rule = RuleGenerator::with(Rule::TYPE_FIXED_SET, 50);
+            $global_rule = RuleGenerator::with(Rule::TYPE_FIXED_SET, 100);
 
             $role_rules = RoleRuleGenerator::withItemRules(
                 [$product_id => $product_rule], [], $global_rule, $category_rule, $category_ids
@@ -110,9 +110,9 @@
             $category_ids = [100];
 
             $product_rule = ItemRuleGenerator::with($product_id, "p", RuleGenerator::with(Rule::TYPE_FIXED_SET, 10));
-            $single_category_rule = ItemRuleGenerator::with(100, "sc", RuleGenerator::with(Rule::TYPE_FIXED_SET, 25));
-            $category_rule = ItemRuleGenerator::with_rules(RuleGenerator::with(Rule::TYPE_FIXED_SET, 50));
-            $global_rule = ItemRuleGenerator::with_rules(RuleGenerator::with(Rule::TYPE_FIXED_SET, 100));
+            $single_category_rule = RuleGenerator::with(Rule::TYPE_FIXED_SET, 25);
+            $category_rule = RuleGenerator::with(Rule::TYPE_FIXED_SET, 50);
+            $global_rule = RuleGenerator::with(Rule::TYPE_FIXED_SET, 100);
 
             $role_rules = RoleRuleGenerator::withItemRules(
                 [$product_id => $product_rule], [100 => $single_category_rule], $global_rule, $category_rule, $category_ids
@@ -125,8 +125,8 @@
         }
 
         public function testProductRuleDoesNotMatchDifferentProductId() {
-            $product_rule = ItemRuleGenerator::with(42, "p", RuleGenerator::with(Rule::TYPE_FIXED_SET, 10));
-            $global_rule = ItemRuleGenerator::with_rules(RuleGenerator::with(Rule::TYPE_FIXED_SET, 100));
+            $product_rule = RuleGenerator::with(Rule::TYPE_FIXED_SET, 10);
+            $global_rule = RuleGenerator::with(Rule::TYPE_FIXED_SET, 100);
             $role_rules = RoleRuleGenerator::withItemRules([42 => $product_rule], [], $global_rule);
 
             $applicable_rule = $role_rules->get_applicable_rule(999, []);
@@ -136,8 +136,8 @@
         }
 
         public function testCategoryRuleMatchesWhenOneOfSeveralCategoriesHasARule() {
-            $category_rule = ItemRuleGenerator::with_rules(RuleGenerator::with(Rule::TYPE_FIXED_SET, 50));
-            $role_rules = RoleRuleGenerator::withItemRules([], [], ItemRuleGenerator::Random(), $category_rule, [100]);
+            $category_rule = RuleGenerator::with(Rule::TYPE_FIXED_SET, 50);
+            $role_rules = RoleRuleGenerator::withItemRules([], [], RuleGenerator::Random(), $category_rule, [100]);
 
             $applicable_rule = $role_rules->get_applicable_rule(-1, [200, 300, 100]);
             $calculated_price = $applicable_rule->calculatePrice(10_000, 0);

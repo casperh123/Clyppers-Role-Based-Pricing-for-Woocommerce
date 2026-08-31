@@ -18,7 +18,7 @@
             $manual_price_calculation = $price * ($reduction / 100);
 
             // Act
-            $calculated_price = $rule->applyRule($price);
+            $calculated_price = $rule->calculatePrice($price);
 
             // Assert
             $this->assertEquals($manual_price_calculation, $calculated_price);
@@ -35,7 +35,7 @@
             $manual_price_calculation = $price * (1 + ($increase / 100));
 
             // Act
-            $caclculated_price = $rule->applyRule($price);
+            $caclculated_price = $rule->calculatePrice($price);
 
             // Assert
             $this->assertEquals($manual_price_calculation, $caclculated_price);
@@ -52,7 +52,7 @@
             $manual_price_calculation = $price - $decrease;
 
             // Act
-            $caclculated_price = $rule->applyRule($price);
+            $caclculated_price = $rule->calculatePrice($price);
 
             // Assert
             $this->assertEquals($manual_price_calculation, $caclculated_price);
@@ -69,7 +69,7 @@
             $manual_price_calculation = $price + $increase;
 
             // Act
-            $caclculated_price = $rule->applyRule($price);
+            $caclculated_price = $rule->calculatePrice($price);
 
             // Assert
             $this->assertEquals($manual_price_calculation, $caclculated_price);
@@ -85,7 +85,7 @@
             $rule = RuleGenerator::with(Rule::TYPE_FIXED_SET, $fixed);
 
             // Act
-            $caclculated_price = $rule->applyRule($price);
+            $caclculated_price = $rule->calculatePrice($price);
 
             // Assert
             $this->assertEquals($fixed, $caclculated_price);

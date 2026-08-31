@@ -17,8 +17,8 @@ class RoleRules {
         public int    $id,
         public string $role_slug,
         public bool   $rule_active = false,
-        public ?ItemRule  $global_rule = null,
-        public ?ItemRule  $category_rule = null,
+        public ?Rule  $global_rule = null,
+        public ?Rule  $category_rule = null,
         public array  $categories = [],           // General category mappings [['123' => '123']]
         public array  $products = [],             // ItemRule[]
         public array  $single_categories = []     // CategoryRule[]
@@ -34,8 +34,8 @@ class RoleRules {
             id: $post->ID,
             role_slug: $post->post_title,
             rule_active: ($content['rule_active'] ?? '') === 'on',
-            global_rule: isset($content['global_rule']) ? ItemRule::from_array($content['global_rule']) : null,
-            category_rule: isset($content['category_rule']) ? ItemRule::from_array($content['category_rule']) : null,
+            global_rule: isset($content['global_rule']) ? Rule::from_array($content['global_rule']) : null,
+            category_rule: isset($content['category_rule']) ? Rule::from_array($content['category_rule']) : null,
             categories: array_Map(fn($id) => intval($id), $content['categories'] ?? []),
             products: isset($content['products']) ? self::key_by_item_id($content['products']) : [],
             single_categories: isset($content['single_categories']) ? self::key_by_item_id($content['single_categories']) : [],
@@ -47,8 +47,8 @@ class RoleRules {
             id: $json['id'],
             role_slug: $json['role_slug'],
             rule_active: ($json['rule_active']) == 'on',
-            global_rule: isset($json['global_rule']) ? ItemRule::from_array($json['global_rule']) : null,
-            category_rule: isset($json['category_rule']) ? ItemRule::from_array($json['category_rule']) : null,
+            global_rule: isset($json['global_rule']) ? Rule::from_array($json['global_rule']) : null,
+            category_rule: isset($json['category_rule']) ? Rule::from_array($json['category_rule']) : null,
             categories: array_Map(fn($id) => intval($id), $json['categories']),
             products: isset($json['products']) ? self::key_by_item_id($json['products']) : [],
             single_categories: isset($json['single_categories']) ? self::key_by_item_id($json['single_categories']) : [],
@@ -96,7 +96,7 @@ class RoleRules {
         return sizeof($this->products) + sizeof($this->single_categories);
     }
 
-    public function get_applicable_rule( $product_id, array $category_ids): ?ItemRule {
+    public function get_applicable_rule( $product_id, array $category_ids): ?PricingRule {
         $product_rule = $this->get_rule_by_product_id( $product_id );
 
         //Check for product rules
@@ -129,7 +129,7 @@ class RoleRules {
     /**
      * Get product rules by product ID
      * @param int $product_id
-     *@return ?ItemRule
+     * @return ?ItemRule
      */
     private function get_rule_by_product_id( int $product_id ): ?ItemRule
     {
@@ -141,11 +141,11 @@ class RoleRules {
     }
 
     private function has_category_rule(): bool {
-        return isset($this->category_rule);
+        return isset($this->category_rule) && $this->category_rule->has_value();
     }
 
     private function has_global_rule(): bool {
-        return isset($this->global_rule);
+        return isset($this->global_rule) && $this->global_rule->has_value();
     }
 
     /**

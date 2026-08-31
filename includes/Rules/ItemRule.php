@@ -4,7 +4,7 @@ namespace ClypperTechnology\RolePricing\Rules;
 
 defined('ABSPATH') || exit;
 
-class ItemRule
+class ItemRule implements PricingRule
 {
     public int $id;
     public string $name;
@@ -35,14 +35,14 @@ class ItemRule
      */
     public function calculatePrice(float $original_price, int $quantity = -1): ?float {
         if($this->quantity_reduction_applies($quantity)) {
-            return $this->quantity_rule->applyRule($original_price);
+            return $this->quantity_rule->calculatePrice($original_price);
         }
 
         if($this->rule->has_value()) {
-            return $this->rule->applyRule($original_price);
+            return $this->rule->calculatePrice($original_price);
         }
 
-        return $original_price;
+        return null;
     }
 
     public function quantity_reduction_message(): ?string

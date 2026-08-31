@@ -76,7 +76,7 @@ class ItemRuleTest extends TestCase
 
         $price = $rule->calculatePrice(1000, 100);
 
-        $this->assertEquals(1000, $price);
+        $this->assertEquals(null, $price);
     }
 
     public function testQuantityRuleCanUseDifferentTypeThanRegularRule(): void
