@@ -1,4 +1,4 @@
-import { ApiPath } from '../shared/apiPaths';
+import { ApiPath } from '@/shared/apiPaths';
 import apifetch from '@wordpress/api-fetch';
 import { Product } from '@/types/product';
 

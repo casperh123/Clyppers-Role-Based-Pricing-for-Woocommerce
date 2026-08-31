@@ -1,4 +1,4 @@
-import { ApiBase } from "../types/apiBases"
+import { ApiBase } from "@/types/apiBases"
 
 export class ApiPath {
   public static rulesPath(): string {

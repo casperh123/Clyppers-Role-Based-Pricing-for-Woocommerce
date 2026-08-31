@@ -1,14 +1,12 @@
-import { Role } from "../types/role";
-import { ApiPath } from "../shared/apiPaths";
+import { Role } from "@/types/role";
+import { ApiPath } from "@/shared/apiPaths";
 import apiFetch from "@wordpress/api-fetch";
 
 export class RoleService {
   public static async getRoles(): Promise<Role[]> {
-    const response = await apiFetch<Role[]>({
+    return apiFetch<Role[]>({
       path: ApiPath.rolesPath(),
     });
-
-    return response;
   }
 
   public static async setRoleActive(role: Role, active: boolean): Promise<Role[]> {
@@ -20,12 +18,10 @@ export class RoleService {
   }
 
   public static async updateRole(role: Role): Promise<number> {
-    const id = await apiFetch<number>({
+    return apiFetch<number>({
       path: ApiPath.rolesPath(),
       method: "PATCH",
       data: role
     });
-
-    return id;
   }
 }
