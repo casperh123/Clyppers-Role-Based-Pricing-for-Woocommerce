@@ -52,7 +52,7 @@ class PriceRules
      * @param WC_Product $product The product object
      * @return string Modified price HTML
      */
-    public function modify_price_html_with_quantity_discount(string $price_html, $product): string
+    public function modify_price_html_with_quantity_discount(string $price_html, WC_Product $product): string
     {
         if (is_admin() || self::$processing || self::$generating_qty_price || !$this->user_has_rule() || !is_product()) {
             return $price_html;
@@ -124,9 +124,9 @@ class PriceRules
      * Check if product is on sale
      *
      * @param bool $is_on_sale bool value.
-     * @param var $product product.
+     * @param WC_Product $product product.
      */
-    public function product_is_on_sale(bool $is_on_sale, $product): bool
+    public function product_is_on_sale(bool $is_on_sale, WC_Product $product): bool
     {
         if (is_admin() || self::$processing || !$this->user_has_rule()) {
             return $is_on_sale;
@@ -224,10 +224,10 @@ class PriceRules
     /**
      * Get sale price with role discount
      *
-     * @param var $price current price.
-     * @param var $product current product.
+     * @param string $price current price.
+     * @param WC_Product $product current product.
      */
-    public function get_rule_sale_price($price, $product)
+    public function get_rule_sale_price(string $price, WC_Product $product): string
     {
         if (self::$processing || !$this->user_has_rule()) {
             return $price;

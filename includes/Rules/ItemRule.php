@@ -19,7 +19,7 @@ class ItemRule
     ) {
         $this->id = $id;
         $this->name = $name;
-        $this->rule = $rule ?? new Rule('', '', '', '');
+        $this->rule = $rule ?? new Rule(Rule::TYPE_PERCENT, 0);
         $this->min_quantity = $min_qty;
     }
     public function to_array(): array {
@@ -38,20 +38,5 @@ class ItemRule
             rule: Rule::from_array( $data['rule'] ?? $data ),
             min_qty: (int)($data['min_qty'] ?? 0),
         );
-    }
-
-    public static function schema(): array
-    {
-        return [
-            'type'       => 'object',
-            'properties' => [
-                'product_id'   => [ 'required' => true, 'type' => 'integer' ],
-                'product_name' => [ 'required' => true, 'type' => 'string', 'sanitize_callback' => 'sanitize_text_field' ],
-                'remove'       => [ 'type' => 'boolean', 'default' => false ],
-                'min_qty'      => [ 'type' => 'integer', 'default' => 0 ],
-                'is_variable'  => [ 'type' => 'string' ],
-                'rule'         => Rule::schema(),
-            ],
-        ];
     }
 }

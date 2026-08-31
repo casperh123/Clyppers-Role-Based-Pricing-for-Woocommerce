@@ -2,9 +2,6 @@
 
 namespace ClypperTechnology\RolePricing\Admin;
 
-use ClypperTechnology\RolePricing\Services\RoleService;
-use ClypperTechnology\RolePricing\Services\RuleService;
-
 defined( 'ABSPATH' ) || exit;
 
 class Admin {

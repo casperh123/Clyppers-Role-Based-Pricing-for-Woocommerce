@@ -31,10 +31,7 @@ final class ProductRuleDTOFactory
 
     private static function get_image_from_product(\WC_Product $product): ?string
     {
-        $image_url = wp_get_attachment_image_url(
-            $product->get_image_id(),
-            'thumbnail'
-        );
+        $image_url = wp_get_attachment_image_url( $product->get_image_id() );
 
         return $image_url ?: null;
     }

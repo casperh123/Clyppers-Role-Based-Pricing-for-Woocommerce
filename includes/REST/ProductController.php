@@ -34,12 +34,12 @@
             ]);
         }
 
-        public function get_items_permissions_check( $request )
+        public function get_items_permissions_check( $request ): bool
         {
             return current_user_can( 'manage_woocommerce' );
         }
 
-        public function get_items( $request )
+        public function get_items( $request ): \WP_REST_Response
         {
             $search   = $request->get_param( 'search' );
             $products = $this->search_product_ids( $search );

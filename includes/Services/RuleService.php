@@ -2,7 +2,6 @@
 
 namespace ClypperTechnology\RolePricing\Services;
 
-use ClypperTechnology\RolePricing\Rules\ItemRule;
 use ClypperTechnology\RolePricing\Rules\RoleRules;
 use InvalidArgumentException;
 use RuntimeException;
@@ -55,45 +54,10 @@ class RuleService {
     }
 
     /**
-     * Copy rules from one role to multiple roles
-     */
-    public function copy_rules( int $from_id, string $type, array $to_ids ): bool {
-        if ( empty( $from_id ) ) {
-            return false;
-        }
-
-        $from_role_rules = $this->get_rules_by_id( $from_id );
-        if ( ! $from_role_rules ) {
-            return false;
-        }
-
-        $success_count = 0;
-
-        foreach ( $to_ids as $to_id ) {
-            $to_role_rules = $this->get_rules_by_id( $to_id );
-            if ( ! $to_role_rules ) {
-                continue;
-            }
-
-            if ( 'category' === $type ) {
-                $to_role_rules->single_categories = $from_role_rules->single_categories;
-            } else {
-                $to_role_rules->products = $from_role_rules->products;
-            }
-
-            if ( $this->save_role_rules( $to_role_rules ) ) {
-                $success_count++;
-            }
-        }
-
-        return $success_count > 0;
-    }
-
-    /**
      * Add rule
      *
      * @param string $role_slug rule name.
-     * @return int Rule ID on success
+     * @return RoleRules Rule success
      * @throws InvalidArgumentException If rule already exists
      * @throws RuntimeException If creation fails
      */
@@ -113,24 +77,6 @@ class RuleService {
         }
 
         return new RoleRules($rule_id, $role_slug, false);
-    }
-
-    /**
-     * Add product to rule
-     */
-    public function add_product_to_rule($id, $name, $rule ): bool {
-        $rule_id = intval( $rule );
-        $role_rule = $this->get_rules_by_id($rule_id);
-
-        if( ! $role_rule ) {
-            return false;
-        }
-
-        $product = new ItemRule($id, $name);
-
-        $role_rule->add_product($product);
-
-        return $this->save_role_rules($role_rule);
     }
 
     /**
@@ -187,36 +133,5 @@ class RuleService {
         $this->role_rules[$user_role] = $rule;
 
         return $rule;
-    }
-
-    public function import_products_from_category( int $rule_id, string $category, bool $variations = false ): int
-    {
-        $products = wc_get_products([
-            'category' => [ $category ],
-            'status'   => 'publish',
-            'limit'    => -1,
-        ]);
-
-        $imported = 0;
-
-        foreach ( $products as $product ) {
-            $children = $product->get_children();
-
-            if ( $variations && ! empty( $children ) ) {
-                foreach ( $children as $child_id ) {
-                    $child      = wc_get_product( $child_id );
-                    $attributes = array_filter( $child->get_attributes(), fn( $v ) => is_string( $v ) && strlen( $v ) > 0 );
-                    $name       = implode( ', ', [ $child->get_title(), ...array_map( 'ucfirst', $attributes ) ] );
-
-                    $this->add_product_to_rule( $child_id, $name, $rule_id );
-                }
-            } else {
-                $this->add_product_to_rule( $product->get_id(), $product->get_name(), $rule_id );
-            }
-
-            $imported++;
-        }
-
-        return $imported;
     }
 }

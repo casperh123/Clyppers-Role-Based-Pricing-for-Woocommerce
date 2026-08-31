@@ -8,8 +8,6 @@ defined('ABSPATH') || exit;
  * RoleRules - Complete pricing rules for a user role
  */
 class RoleRules {
-    public const GUEST_ROLE = 'guest';
-
     /**
      * @param int[] $categories;
      * @param ItemRule[] $products
@@ -75,7 +73,7 @@ class RoleRules {
     }
 
     /**
-     * @param array
+     * @param array $items
      * @return ItemRule[]
      */
     private static function key_by_item_id(array $items): array {
@@ -136,10 +134,6 @@ class RoleRules {
         }
 
         return null;
-    }
-
-    public function add_product(ItemRule $product): void {
-        $this->products[$product->id] = $product;
     }
 
     /**

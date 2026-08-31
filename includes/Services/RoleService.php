@@ -13,19 +13,6 @@ class RoleService
     public function __construct() {}
 
     /**
-     * Count users for role
-     *
-     * @param $role
-     * @return int|string
-     */
-    public function users_in_role( $role ): int|string
-    {
-        $users = count_users();
-
-        return $users['avail_roles'][ $role['name'] ] ?? 0;
-    }
-
-    /**
      *  asdf
      * @param RoleRules[] $rules
      * @return RoleDTO[]
