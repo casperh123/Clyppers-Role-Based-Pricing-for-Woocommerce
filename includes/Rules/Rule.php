@@ -4,7 +4,7 @@ namespace ClypperTechnology\RolePricing\Rules;
 
 defined('ABSPATH') || exit;
 
-class Rule
+class Rule implements PricingRule
 {
     public string $type;
     public int $value;
@@ -24,7 +24,7 @@ class Rule
         $this->value = $value;
     }
 
-    public function applyRule(float $original_price): ?float {
+    public function calculatePrice(float $original_price, int $quantity = -1): ?float {
         $adjust_value = floatval($this->value);
 
         $calculated_price = match ($this->type) {

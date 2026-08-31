@@ -13,8 +13,8 @@ class RoleRuleGenerator
         $role_slug = "slug_{${$id}}";
         $is_active = boolval(random_int(0, 1));
 
-        $global_rule = ItemRuleGenerator::Random();
-        $global_category_rule = ItemRuleGenerator::Random();
+        $global_rule = RuleGenerator::Random();
+        $global_category_rule = RuleGenerator::Random();
         $category_ids = self::randomIntArray(random_int(1, 100));
         $product_rules = ItemRuleGenerator::RandomCollection(random_int(1, 100));
         $single_category_rules = ItemRuleGenerator::RandomCollection(random_int(1, 100));
@@ -46,8 +46,8 @@ class RoleRuleGenerator
     public static function withItemRules(
         array  $product_rules,
         array  $singe_category_rules,
-        ?ItemRule  $global_rule = null,
-        ?ItemRule $category_rule = null,
+        ?Rule  $global_rule = null,
+        ?Rule $category_rule = null,
         array $categories = []
     ): RoleRules {
         $role_rules = self::empty();
