@@ -7,7 +7,7 @@ defined('ABSPATH') || exit;
 class Rule implements PricingRule
 {
     public string $type;
-    public int $value;
+    public float $value;
 
     public const  TYPE_PERCENT = 'percent';
     public const  TYPE_PERCENT_ADD = 'percent_add';
@@ -17,7 +17,7 @@ class Rule implements PricingRule
 
     public function __construct(
         string $type,
-        int $value,
+        float $value,
     )
     {
         $this->type = $type;
@@ -25,14 +25,12 @@ class Rule implements PricingRule
     }
 
     public function calculatePrice(float $original_price, int $quantity = -1): ?float {
-        $adjust_value = floatval($this->value);
-
         $calculated_price = match ($this->type) {
-            Rule::TYPE_PERCENT => $original_price * (1.0 - ($adjust_value / 100)),
-            Rule::TYPE_PERCENT_ADD => $original_price * (1.0 + ($adjust_value / 100)),
-            Rule::TYPE_FIXED => $original_price - $adjust_value,
-            Rule::TYPE_FIXED_ADD => $original_price + $adjust_value,
-            Rule::TYPE_FIXED_SET => $adjust_value,
+            Rule::TYPE_PERCENT => $original_price * (1.0 - ($this->value / 100)),
+            Rule::TYPE_PERCENT_ADD => $original_price * (1.0 + ($this->value / 100)),
+            Rule::TYPE_FIXED => $original_price - $this->value,
+            Rule::TYPE_FIXED_ADD => $original_price + $this->value,
+            Rule::TYPE_FIXED_SET => $this->value,
             default => null
         };
 
@@ -58,7 +56,7 @@ class Rule implements PricingRule
     public static function from_array( array $rule ) : Rule {
         return new Rule(
             $rule['type'] ?? "",
-            intval($rule['value'] ?? 0),
+            floatval($rule['value'] ?? 0.0),
         );
     }
 }
