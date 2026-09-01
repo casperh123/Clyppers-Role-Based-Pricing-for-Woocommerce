@@ -27,7 +27,7 @@ class ProductDTO
         return new self(
             $product->get_id(),
             $product->get_title(),
-            wc_price( floatval( $product->get_price()) ),
+            wc_price( floatval( $product->get_price('edit')) ),
             wp_get_attachment_image_url( $product->get_image_id() )
         );
     }
