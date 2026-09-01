@@ -150,7 +150,7 @@ class ItemRuleTest extends TestCase
         );
 
         $this->assertTrue(
-            $rule->reduction_applies(1)
+            $rule->rule_applies(1)
         );
     }
 
@@ -162,7 +162,7 @@ class ItemRuleTest extends TestCase
         );
 
         $this->assertTrue(
-            $rule->reduction_applies(10)
+            $rule->rule_applies(10)
         );
     }
 
@@ -171,7 +171,7 @@ class ItemRuleTest extends TestCase
         $rule = ItemRuleGenerator::with_rules();
 
         $this->assertFalse(
-            $rule->reduction_applies(100)
+            $rule->rule_applies(100)
         );
     }
 

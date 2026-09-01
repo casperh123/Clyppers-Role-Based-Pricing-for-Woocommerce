@@ -42,8 +42,8 @@ class Rule implements PricingRule
         return round($calculated_price, wc_get_price_decimals() ?? 2);
     }
 
-    public function has_value(): bool {
-        return ! empty( $this->value );
+    public function rule_applies(int $quantity = 1): bool {
+        return $this->value > 0;
     }
 
     public function to_array() : array {
