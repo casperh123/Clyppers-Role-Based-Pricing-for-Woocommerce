@@ -682,6 +682,7 @@ function Rules() {
   const onSubmit = async rule => {
     setTransition(() => {
       _services_ruleService__WEBPACK_IMPORTED_MODULE_0__.RuleService.updateRules(rule);
+      methods.reset(rule);
     });
   };
   if (isLoading || !rule) {
