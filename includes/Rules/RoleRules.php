@@ -96,30 +96,30 @@ class RoleRules {
         return sizeof($this->products) + sizeof($this->single_categories);
     }
 
-    public function get_applicable_rule( $product_id, array $category_ids): ?PricingRule {
+    public function get_applicable_rule( $product_id, array $category_ids, int $quantity = 1): ?PricingRule {
         $product_rule = $this->get_rule_by_product_id( $product_id );
 
         //Check for product rules
-        if ( $product_rule ) {
+        if ($product_rule && $product_rule->rule_applies($quantity)) {
             return $product_rule;
         }
 
         $category_rule = $this->get_single_category_rule( $category_ids );
 
 
-        if ( $category_rule ) {
+        if ( $category_rule && $category_rule->rule_applies($quantity)) {
             return $category_rule;
         }
 
         //Check for general category reductions / increases
-        if ($this->has_categories() && $this->has_category_rule()) {
+        if ($this->has_categories() && $this->category_rule_applies()) {
             // Check if product is in any selected general categories
             if ( $this->matches_any_category( $category_ids ) ) {
                 return $this->category_rule;
             }
         }
 
-        if ( $this->has_global_rule() ) {
+        if ( $this->global_rule_applies() ) {
             return $this->global_rule;
         }
 
@@ -140,12 +140,12 @@ class RoleRules {
         return ! empty( $this->categories );
     }
 
-    private function has_category_rule(): bool {
-        return isset($this->category_rule) && $this->category_rule->has_value();
+    private function category_rule_applies(): bool {
+        return isset($this->category_rule) && $this->category_rule->rule_applies();
     }
 
-    private function has_global_rule(): bool {
-        return isset($this->global_rule) && $this->global_rule->has_value();
+    private function global_rule_applies(): bool {
+        return isset($this->global_rule) && $this->global_rule->rule_applies();
     }
 
     /**

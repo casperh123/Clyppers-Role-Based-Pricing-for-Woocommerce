@@ -38,7 +38,7 @@ class ItemRule implements PricingRule
             return $this->quantity_rule->calculatePrice($original_price);
         }
 
-        if($this->rule->has_value()) {
+        if($this->rule->rule_applies()) {
             return $this->rule->calculatePrice($original_price);
         }
 
@@ -47,7 +47,7 @@ class ItemRule implements PricingRule
 
     public function quantity_reduction_message(): ?string
     {
-        if ( !$this->quantity_rule->has_value() || $this->min_quantity <= 0 ) {
+        if ( !$this->quantity_rule->rule_applies() || $this->min_quantity <= 0 ) {
             return null;
         }
 
@@ -76,13 +76,13 @@ class ItemRule implements PricingRule
 
     public function quantity_reduction_applies(int $quantity = -1): bool
     {
-        return $this->quantity_rule->has_value()
+        return $this->quantity_rule->rule_applies()
             && $this->min_quantity > 0
             && $quantity >= $this->min_quantity;
     }
 
-    public function reduction_applies(int $quantity): bool {
-        return $this->rule->has_value() || $this->quantity_reduction_applies($quantity);
+    public function rule_applies(int $quantity = 1): bool {
+        return $this->rule->rule_applies() || $this->quantity_reduction_applies($quantity);
     }
 
     public function to_array(): array {
