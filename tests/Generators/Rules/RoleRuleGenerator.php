@@ -1,6 +1,7 @@
 <?php
 
 namespace Generators\Rules;
+use ClypperTechnology\RolePricing\Rules\ItemRule;
 use ClypperTechnology\RolePricing\Rules\RoleRules;
 use ClypperTechnology\RolePricing\Rules\Rule;
 

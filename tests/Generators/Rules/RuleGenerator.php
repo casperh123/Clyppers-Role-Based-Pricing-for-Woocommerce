@@ -10,23 +10,18 @@ class RuleGenerator
     public static function Random()
     {
         $type = RuleTypeGenerator::Random();
-        $quantity_type = RuleTypeGenerator::Random();
 
         return new Rule(
             $type,
             self::generateValue($type),
-            self::generateValue($quantity_type),
-            $quantity_type
         );
     }
 
-    public static function with($type, $value, $quantity = 0, $quantity_type = Rule::TYPE_PERCENT): Rule
+    public static function with($type, $value): Rule
     {
         return new Rule(
             $type,
             $value,
-            $quantity,
-            $quantity_type
         );
     }
 

@@ -4,12 +4,10 @@ namespace ClypperTechnology\RolePricing\Rules;
 
 defined('ABSPATH') || exit;
 
-class Rule
+class Rule implements PricingRule
 {
     public string $type;
     public int $value;
-    public int $quantity_value;
-    public string $quantity_value_type;
 
     public const  TYPE_PERCENT = 'percent';
     public const  TYPE_PERCENT_ADD = 'percent_add';
@@ -17,58 +15,24 @@ class Rule
     public const  TYPE_FIXED_ADD = 'fixed_add';
     public const  TYPE_FIXED_SET = 'fixed_set';
 
-    private const  USE_QUANTITY_RULE = 'use_quantity_rule';
-    private const  USE_REGULAR_RULE = 'use_regular_rule';
-    private const  USE_NO_RULE = 'use_no_rule';
-
     public function __construct(
         string $type,
         int $value,
-        int $quantity = 0,
-        string $quantity_type = self::TYPE_PERCENT
     )
     {
         $this->type = $type;
         $this->value = $value;
-        $this->quantity_value = $quantity;
-        $this->quantity_value_type = $quantity_type;
     }
 
-    public function has_value(): bool {
-        return ! empty( $this->value );
-    }
+    public function calculatePrice(float $original_price, int $quantity = -1): ?float {
+        $adjust_value = floatval($this->value);
 
-    public function has_quantity_value(): bool {
-        return ! empty( $this->quantity_value );
-    }
-
-    /**
-     * Calculate adjusted price based on rule type and value
-     *
-     * @param float $original_price The original price to adjust
-     * @param int $minimum_quantity Minimum quantity required for quantity rule
-     * @param int $quantity Current cart quantity
-     * @return ?float The adjusted price
-     */
-    public function calculatePrice(float $original_price, int $minimum_quantity = 0, int $quantity = -1): ?float {
-        $use_rule = $this->getApplicableRule($minimum_quantity, $quantity);
-
-        return match( $use_rule ) {
-            self::USE_QUANTITY_RULE => $this->applyRule($this->quantity_value_type, $this->quantity_value, $original_price),
-            self::USE_REGULAR_RULE => $this->applyRule($this->type, $this->value, $original_price),
-            self::USE_NO_RULE => null
-        };
-    }
-
-    private function applyRule(string $rule_type, string $rule_value, float $original_price): ?float {
-        $adjust_value = floatval($rule_value);
-
-        $calculated_price = match ($rule_type) {
-            self::TYPE_PERCENT => $original_price * (1.0 - ($adjust_value / 100)),
-            self::TYPE_PERCENT_ADD => $original_price * (1.0 + ($adjust_value / 100)),
-            self::TYPE_FIXED => $original_price - $adjust_value,
-            self::TYPE_FIXED_ADD => $original_price + $adjust_value,
-            self::TYPE_FIXED_SET => $adjust_value,
+        $calculated_price = match ($this->type) {
+            Rule::TYPE_PERCENT => $original_price * (1.0 - ($adjust_value / 100)),
+            Rule::TYPE_PERCENT_ADD => $original_price * (1.0 + ($adjust_value / 100)),
+            Rule::TYPE_FIXED => $original_price - $adjust_value,
+            Rule::TYPE_FIXED_ADD => $original_price + $adjust_value,
+            Rule::TYPE_FIXED_SET => $adjust_value,
             default => null
         };
 
@@ -80,24 +44,14 @@ class Rule
         return round($calculated_price, wc_get_price_decimals() ?? 2);
     }
 
-    private function getApplicableRule(int $minimum_quantity, int $quantity): string {
-        if($this->has_quantity_value() && $quantity >= $minimum_quantity) {
-            return self::USE_QUANTITY_RULE;
-        }
-
-        if($this->has_value()) {
-            return self::USE_REGULAR_RULE;
-        }
-
-        return self::USE_NO_RULE;
+    public function has_value(): bool {
+        return ! empty( $this->value );
     }
 
     public function to_array() : array {
         return [
             'type' => $this->type,
             'value' => $this->value,
-            'quantity' => $this->quantity_value,
-            'quantity_type' => $this->quantity_value_type
         ];
     }
 
@@ -105,8 +59,6 @@ class Rule
         return new Rule(
             $rule['type'] ?? "",
             intval($rule['value'] ?? 0),
-            intval($rule['quantity'] ?? 0),
-            $rule['quantity_type'] ?? ""
         );
     }
 }

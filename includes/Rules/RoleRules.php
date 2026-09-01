@@ -96,41 +96,31 @@ class RoleRules {
         return sizeof($this->products) + sizeof($this->single_categories);
     }
 
-    public function get_applicable_rule( $product_id, array $category_ids ): ?ApplicableRule {
+    public function get_applicable_rule( $product_id, array $category_ids): ?PricingRule {
         $product_rule = $this->get_rule_by_product_id( $product_id );
 
         //Check for product rules
         if ( $product_rule ) {
-            return new ApplicableRule(
-                $product_rule->rule,
-                $product_rule->min_quantity
-            );
+            return $product_rule;
         }
 
         $category_rule = $this->get_single_category_rule( $category_ids );
 
 
         if ( $category_rule ) {
-            return new ApplicableRule(
-                $category_rule->rule,
-                $category_rule->min_quantity
-            );
+            return $category_rule;
         }
 
         //Check for general category reductions / increases
         if ($this->has_categories() && $this->has_category_rule()) {
             // Check if product is in any selected general categories
             if ( $this->matches_any_category( $category_ids ) ) {
-                return new ApplicableRule(
-                    $this->category_rule
-                );
+                return $this->category_rule;
             }
         }
 
         if ( $this->has_global_rule() ) {
-            return new ApplicableRule(
-                $this->global_rule
-            );
+            return $this->global_rule;
         }
 
         return null;
@@ -139,7 +129,7 @@ class RoleRules {
     /**
      * Get product rules by product ID
      * @param int $product_id
-     *@return ?ItemRule
+     * @return ?ItemRule
      */
     private function get_rule_by_product_id( int $product_id ): ?ItemRule
     {
@@ -151,11 +141,11 @@ class RoleRules {
     }
 
     private function has_category_rule(): bool {
-        return $this->category_rule && $this->category_rule->has_value();
+        return isset($this->category_rule) && $this->category_rule->has_value();
     }
 
     private function has_global_rule(): bool {
-        return $this->global_rule && $this->global_rule->has_value();
+        return isset($this->global_rule) && $this->global_rule->has_value();
     }
 
     /**

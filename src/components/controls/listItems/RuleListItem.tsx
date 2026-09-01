@@ -82,7 +82,7 @@ export const RuleListItem = ({
       <td className="quantity-column">
         <Controller 
           control={control}
-          name={`${ruleKey}.${index}.rule.quantity_type`}
+          name={`${ruleKey}.${index}.quantity_rule.type`}
           render={({ field }) => (
             <SelectControl 
               value={field.value}
@@ -95,7 +95,7 @@ export const RuleListItem = ({
       <td className="quantity-column">
       <Controller 
           control={control}
-          name={`${ruleKey}.${index}.rule.quantity`}
+          name={`${ruleKey}.${index}.quantity_rule.value`}
           render={({field}) => (
             <Input 
               value={field.value}

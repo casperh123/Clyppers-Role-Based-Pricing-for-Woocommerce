@@ -37,6 +37,7 @@ export function Rules() {
   const onSubmit = async (rule: RoleRules) => {
       setTransition(() => { 
         RuleService.updateRules(rule); 
+        methods.reset(rule);
       });
   }
 

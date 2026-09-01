@@ -9,6 +9,7 @@ export const createRuleFromProduct = (product: Product): ItemRule => {
     name: product.name,
     price_html: product.price_html,
     rule: itemRule(),
+    quantity_rule: itemRule(),
     min_qty: 0,
     image_url: product.image_url
   }
@@ -19,6 +20,7 @@ export const createRuleFromCategory = (category: Category): ItemRule => {
     id: category.id,
     name: category.name,
     rule: itemRule(),
+    quantity_rule: itemRule(),
     min_qty: 0,
     image_url: category.image.src
   }
@@ -28,7 +30,5 @@ const itemRule = (): PricingRule => {
   return {
     type: 'percent',
     value: '0',
-    quantity: '0',
-    quantity_type: 'percent' 
   };
 }
