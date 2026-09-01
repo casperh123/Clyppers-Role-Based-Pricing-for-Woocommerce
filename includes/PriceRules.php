@@ -10,6 +10,7 @@ namespace ClypperTechnology\RolePricing;
 use ClypperTechnology\RolePricing\Rules\ItemRule;
 use ClypperTechnology\RolePricing\Rules\PricingRule;
 use ClypperTechnology\RolePricing\Rules\RoleRules;
+use ClypperTechnology\RolePricing\Rules\Rule;
 use ClypperTechnology\RolePricing\Services\RuleService;use WC_Product;
 
 defined('ABSPATH') || exit;
@@ -60,13 +61,9 @@ class PriceRules
         }
 
         $rule = $this->rule_service->get_rule_by_current_role();
-        $cart_qty = $this->get_cart_item_qty($product->get_id());
-        $applicable_rule = $this->get_applicable_rule($rule, $product, $cart_qty);
+        $applicable_rule = $this->get_quantity_rule($rule, $product);
 
-        if (
-                !$applicable_rule instanceof ItemRule ||
-                !$applicable_rule->quantity_reduction_applies($cart_qty)
-        ) {
+        if (!$applicable_rule) {
             return $price_html;
         }
 
@@ -178,12 +175,9 @@ class PriceRules
             return;
         }
 
-        $applicable_rule = $this->get_applicable_rule($rule, $product);
+        $applicable_rule = $this->get_quantity_rule($rule, $product);
 
-        if (
-                !$applicable_rule instanceof ItemRule ||
-                !$applicable_rule->quantity_rule->rule_applies()
-        ) {
+        if (!$applicable_rule) {
             return;
         }
 
@@ -327,6 +321,17 @@ class PriceRules
         }
 
         return $rule->get_applicable_rule($product->get_id(), $category_ids, $quantity);
+    }
+
+    private function get_quantity_rule(RoleRules $rule, WC_Product $product): ?ItemRule
+    {
+        $category_ids = $this->get_category_ids($product);
+
+        if (is_wp_error($category_ids)) {
+            $category_ids = [];
+        }
+
+        return $rule->get_quantity_rule($product->get_id(), $category_ids);
     }
 
 

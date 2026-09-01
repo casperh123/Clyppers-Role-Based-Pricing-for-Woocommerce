@@ -126,6 +126,23 @@ class RoleRules {
         return null;
     }
 
+    public function get_quantity_rule( $product_id, array $category_ids): ?ItemRule {
+        $product_rule = $this->get_rule_by_product_id( $product_id );
+
+        //Check for product rules
+        if ($product_rule && $product_rule->quantity_rule->rule_applies()) {
+            return $product_rule;
+        }
+
+        $category_rule = $this->get_single_category_rule( $category_ids );
+
+        if ( $category_rule && $category_rule->quantity_rule->rule_applies()) {
+            return $category_rule;
+        }
+
+        return null;
+    }
+
     /**
      * Get product rules by product ID
      * @param int $product_id
