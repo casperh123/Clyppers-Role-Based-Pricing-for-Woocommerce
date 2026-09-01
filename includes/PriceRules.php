@@ -60,16 +60,13 @@ class PriceRules
         }
 
         $rule = $this->rule_service->get_rule_by_current_role();
-        $applicable_rule = $this->get_applicable_rule($rule, $product);
+        $cart_qty = $this->get_cart_item_qty($product->get_id());
+        $applicable_rule = $this->get_applicable_rule($rule, $product, $cart_qty);
 
         if (
                 !$applicable_rule instanceof ItemRule ||
-                !$applicable_rule->quantity_rule->has_value()
+                !$applicable_rule->quantity_reduction_applies($cart_qty)
         ) {
-            return $price_html;
-        }
-
-        if ($this->get_cart_item_qty($product->get_id()) >= $applicable_rule->min_quantity) {
             return $price_html;
         }
 
@@ -185,7 +182,7 @@ class PriceRules
 
         if (
                 !$applicable_rule instanceof ItemRule ||
-                !$applicable_rule->quantity_rule->has_value()
+                !$applicable_rule->quantity_rule->rule_applies()
         ) {
             return;
         }
@@ -321,7 +318,7 @@ class PriceRules
         return $applicable_rule?->calculatePrice($price_new, $cart_qty);
     }
 
-    private function get_applicable_rule(RoleRules $rule, $product): ?PricingRule
+    private function get_applicable_rule(RoleRules $rule, WC_Product $product, int $quantity = 1): ?PricingRule
     {
         $category_ids = $this->get_category_ids($product);
 
@@ -329,7 +326,7 @@ class PriceRules
             $category_ids = [];
         }
 
-        return $rule->get_applicable_rule($product->get_id(), $category_ids);
+        return $rule->get_applicable_rule($product->get_id(), $category_ids, $quantity);
     }
 
 
