@@ -42,7 +42,7 @@ class Rule implements PricingRule
         return round($calculated_price, wc_get_price_decimals() ?? 2);
     }
 
-    public function rule_applies(int $quantity = 1): bool {
+    public function rule_applies(): bool {
         return $this->value > 0;
     }
 

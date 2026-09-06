@@ -10,7 +10,6 @@ namespace ClypperTechnology\RolePricing;
 use ClypperTechnology\RolePricing\Rules\ItemRule;
 use ClypperTechnology\RolePricing\Rules\PricingRule;
 use ClypperTechnology\RolePricing\Rules\RoleRules;
-use ClypperTechnology\RolePricing\Rules\Rule;
 use ClypperTechnology\RolePricing\Services\RuleService;use WC_Product;
 
 defined('ABSPATH') || exit;
@@ -312,7 +311,7 @@ class PriceRules
         return $applicable_rule?->calculatePrice($price_new, $cart_qty);
     }
 
-    private function get_applicable_rule(RoleRules $rule, WC_Product $product, int $quantity = 1): ?PricingRule
+    private function get_applicable_rule(RoleRules $rule, WC_Product $product): ?PricingRule
     {
         $category_ids = $this->get_category_ids($product);
 
@@ -320,7 +319,7 @@ class PriceRules
             $category_ids = [];
         }
 
-        return $rule->get_applicable_rule($product->get_id(), $category_ids, $quantity);
+        return $rule->get_applicable_rule($product->get_id(), $category_ids);
     }
 
     private function get_quantity_rule(RoleRules $rule, WC_Product $product): ?ItemRule
