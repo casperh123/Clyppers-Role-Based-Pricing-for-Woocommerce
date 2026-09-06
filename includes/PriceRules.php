@@ -21,24 +21,25 @@ defined('ABSPATH') || exit;
 class PriceRules
 {
     private RuleService $rule_service;
+    private PricingCalculator  $pricing_calculator;
 
-    private static bool $processing = false;
     private static bool $generating_qty_price = false;
 
     public function __construct(RuleService $rule_service)
     {
         $this->rule_service = $rule_service;
+        $this->pricing_calculator = new PricingCalculator();
 
         add_filter('woocommerce_product_is_on_sale', [$this, 'product_is_on_sale'], 999, 2);
         add_action('woocommerce_before_shop_loop_item', [$this, 'show_discount_banner_shop_archive'], 999);
         add_filter('flatsome_custom_single_product_1', [$this, 'show_discount_banner_product_page'], 999, 3);
-        add_filter('woocommerce_get_price_html', [$this, 'modify_price_html_with_quantity_discount'], 999, 2);
-        add_filter('woocommerce_product_get_price', [$this, 'get_rule_sale_price'], 20, 2);
-        add_filter('woocommerce_product_variation_get_price', [$this, 'get_rule_sale_price'], 20, 2);
-        add_filter('woocommerce_product_get_sale_price', [$this, 'get_rule_sale_price'], 20, 2);
-        add_filter('woocommerce_product_variation_get_sale_price', [$this, 'get_rule_sale_price'], 20, 2);
-        add_filter('woocommerce_variation_prices_price', [$this, 'get_rule_sale_price'], 20, 3);
-        add_filter('woocommerce_variation_prices_sale_price', [$this, 'get_rule_sale_price'], 20, 3);
+        add_filter('woocommerce_get_price_html', [$this, 'add_quantity_discount_display'], 999, 2);
+        add_filter('woocommerce_product_get_price', [$this, 'get_rule_price'], 20, 2);
+        add_filter('woocommerce_product_variation_get_price', [$this, 'get_rule_price'], 20, 2);
+        add_filter('woocommerce_product_get_sale_price', [$this, 'get_rule_price'], 20, 2);
+        add_filter('woocommerce_product_variation_get_sale_price', [$this, 'get_rule_price'], 20, 2);
+        add_filter('woocommerce_variation_prices_price', [$this, 'get_rule_price'], 20, 3);
+        add_filter('woocommerce_variation_prices_sale_price', [$this, 'get_rule_price'], 20, 3);
         add_action(
                 'woocommerce_before_calculate_totals',
                 [$this, 'apply_role_pricing_to_cart'],
@@ -53,47 +54,50 @@ class PriceRules
      * @param WC_Product $product The product object
      * @return string Modified price HTML
      */
-    public function modify_price_html_with_quantity_discount(string $price_html, WC_Product $product): string
+    public function add_quantity_discount_display(string $price_html, WC_Product $product): string
     {
-        if (is_admin() || self::$processing || self::$generating_qty_price || !$this->user_has_rule() || !is_product()) {
+        if (is_admin() || self::$generating_qty_price || !$this->user_has_rule() || !is_product()) {
             return $price_html;
         }
 
         $rule = $this->rule_service->get_rule_by_current_role();
-        $applicable_rule = $this->get_quantity_rule($rule, $product);
+        $applicable_quantity_rule = $this->get_quantity_rule($rule, $product);
 
-        if (!$applicable_rule) {
+        if (!$applicable_quantity_rule) {
             return $price_html;
         }
 
-        self::$processing = true;
+        $original_price = $this->pricing_calculator->get_wc_price($product);
+        $cart_quantity = $this->get_cart_item_qty($product->get_id());
+        $qty_discount_price = $applicable_quantity_rule->calculatePrice($original_price, $applicable_quantity_rule->min_quantity);
 
-        $original_price = wc_get_price_including_tax($product);
-
-        // Calculate quantity discount price (bypasses regular role discount)
-        $qty_discount_price = $applicable_rule->calculatePrice($original_price, $applicable_rule->min_quantity);
-
-        if (!$qty_discount_price) {
+        if (!$qty_discount_price || $applicable_quantity_rule->quantity_reduction_applies($cart_quantity)) {
             return $price_html;
         }
-
-        self::$generating_qty_price = true;
-
-        $temp_product = clone $product;
-        $temp_product->set_price($qty_discount_price);
-        $temp_product->set_regular_price($qty_discount_price);
-        $temp_product->set_sale_price(''); // clear sale price so it's NOT marked as on sale
-
-        $qty_price_html = $temp_product->get_price_html();
-
-        self::$generating_qty_price = false;
-        self::$processing = false;
 
         return $price_html .
                 '<div style="margin: 20px 0; padding: 20px; width: 100%; background-color: #e8e8e8; display: flex; flex-direction: column;">' .
-                '<p style="margin: 0 0 10px 0;"> Stykpris v/ ' . esc_html($applicable_rule->min_quantity) . '+ stk.:</p>' .
-                '<p class="price product-page-price">' . $qty_price_html . '</p>' .
+                '<p style="margin: 0 0 10px 0;"> Stykpris v/ ' . esc_html($applicable_quantity_rule->min_quantity) . '+ stk.:</p>' .
+                '<p class="price product-page-price">' . wc_price($qty_discount_price) . '</p>' .
                 '</div>';
+    }
+
+    /**
+     * Get sale price with role discount
+     *
+     * @param string $price current price.
+     * @param WC_Product $product current product.
+     */
+    public function get_rule_price(string $price, WC_Product $product): string
+    {
+        $cart_qty = $this->get_cart_item_qty($product->get_id());
+        $calculated_price = $this->resolve_role_price($product, $cart_qty);
+
+        if (!$calculated_price) {
+            return $price;
+        }
+
+        return strval($calculated_price);
     }
 
     private function resolve_role_price(WC_Product $product, int $quantity = 1): ?float
@@ -108,13 +112,20 @@ class PriceRules
             return null;
         }
 
-        // Use WC sale price if exists, otherwise regular
-        $wc_sale_price = $product->get_sale_price();
-        $base_price = !empty($wc_sale_price)
-                ? floatval($wc_sale_price)
-                : floatval($product->get_regular_price());
+        return $this->role_price($rule, $product, $quantity);
+    }
 
-        return $this->role_price($rule, $product, $base_price, $quantity);
+    public function role_price(RoleRules $rule, WC_Product $product, int $cart_qty): ?float
+    {
+        $applicable_rule = $this->get_applicable_rule($rule, $product);
+
+        if(!$applicable_rule) {
+            return null;
+        }
+
+        $base_price = $this->pricing_calculator->get_wc_price($product);
+
+        return $applicable_rule?->calculatePrice($base_price, $cart_qty);
     }
 
     /**
@@ -125,24 +136,18 @@ class PriceRules
      */
     public function product_is_on_sale(bool $is_on_sale, WC_Product $product): bool
     {
-        if (is_admin() || self::$processing || !$this->user_has_rule()) {
+        if (is_admin() || !$this->user_has_rule()) {
             return $is_on_sale;
         }
 
-        self::$processing = true;
+        $regular_price = floatval($product->get_regular_price("edit"));
+        $rule_price = $this->get_rule_price('', $product);
 
-        try {
-            $regular_price = floatval($product->get_regular_price());
-            $sale_price = $this->get_rule_sale_price('', $product);
-
-            if (empty($sale_price)) {
-                return $is_on_sale;
-            }
-
-            return floatval($sale_price) < $regular_price;
-        } finally {
-            self::$processing = false;
+        if (!$rule_price) {
+            return $is_on_sale;
         }
+
+        return floatval($rule_price) < $regular_price;
     }
 
     public function show_discount_banner_shop_archive(): void
@@ -157,12 +162,7 @@ class PriceRules
 
     private function show_discount_banner(bool $shortened_message = false): void
     {
-        global $product;
-
-        // Fallback if global not set
-        if (!$product) {
-            $product = wc_get_product();
-        }
+        $product = wc_get_product();
 
         if (!$product) {
             return;
@@ -174,13 +174,13 @@ class PriceRules
             return;
         }
 
-        $applicable_rule = $this->get_quantity_rule($rule, $product);
+        $applicable_quantity_rule = $this->get_quantity_rule($rule, $product);
 
-        if (!$applicable_rule) {
+        if (!$applicable_quantity_rule) {
             return;
         }
 
-        $message = $applicable_rule->quantity_reduction_message();
+        $message = $applicable_quantity_rule->quantity_reduction_message();
 
         if ($shortened_message) {
             ?>
@@ -203,7 +203,6 @@ class PriceRules
         }
     }
 
-
     /**
      * Check if user has a role or is guest frontend
      */
@@ -218,97 +217,27 @@ class PriceRules
         return $rule->rule_active;
     }
 
-    /**
-     * Get sale price with role discount
-     *
-     * @param string $price current price.
-     * @param WC_Product $product current product.
-     */
-    public function get_rule_sale_price(string $price, WC_Product $product): string
-    {
-        if (self::$processing || !$this->user_has_rule()) {
-            return $price;
-        }
-
-        self::$processing = true;
-
-        try {
-            $rule = $this->rule_service->get_rule_by_current_role();
-            if (!$rule) {
-                return $price;
-            }
-
-            $applicable_rule = $this->get_applicable_rule($rule, $product);
-            if (!$applicable_rule) {
-                return $price;
-            }
-
-            // Base WC price
-            $wc_sale_price = $product->get_sale_price();
-            $base_price = !empty($wc_sale_price)
-                    ? floatval($wc_sale_price)
-                    : floatval($product->get_regular_price());
-
-            // Get cart quantity
-            $cart_qty = $this->get_cart_item_qty($product->get_id());
-
-            // If no cart qty yet, treat as 1
-            $effective_qty = $cart_qty > 0 ? $cart_qty : 1;
-
-            // Calculate role price using actual quantity
-            $calculated = $applicable_rule->calculatePrice(
-                    $base_price,
-                    $effective_qty
-            );
-
-            return $calculated !== null
-                    ? strval($calculated)
-                    : $price;
-
-        } finally {
-            self::$processing = false;
-        }
-    }
-
     public function apply_role_pricing_to_cart($cart): void
     {
         if (is_admin() && !defined('DOING_AJAX') && !defined('REST_REQUEST')) {
             return;
         }
 
-        if (self::$processing) {
-            return;
-        }
+        foreach ($cart->get_cart() as $cart_item) {
 
-        self::$processing = true;
-
-        try {
-            foreach ($cart->get_cart() as $cart_item) {
-
-                if (!isset($cart_item['data']) || !is_object($cart_item['data'])) {
-                    continue;
-                }
-
-                $product  = $cart_item['data'];
-                $quantity = $cart_item['quantity'];
-
-                $new_price = $this->resolve_role_price($product, $quantity);
-
-                if ($new_price !== null) {
-                    $product->set_price($new_price);
-                }
+            if (!isset($cart_item['data']) || !is_object($cart_item['data'])) {
+                continue;
             }
 
-        } finally {
-            self::$processing = false;
+            $product  = $cart_item['data'];
+            $quantity = $cart_item['quantity'];
+
+            $new_price = $this->resolve_role_price($product, $quantity);
+
+            if ($new_price) {
+                $product->set_price($new_price);
+            }
         }
-    }
-
-    public function role_price(RoleRules $rule, $product, float $price_new, int $cart_qty): ?float
-    {
-        $applicable_rule = $this->get_applicable_rule($rule, $product);
-
-        return $applicable_rule?->calculatePrice($price_new, $cart_qty);
     }
 
     private function get_applicable_rule(RoleRules $rule, WC_Product $product): ?PricingRule
