@@ -40,8 +40,12 @@ export const ItemSearch = <T extends SearchItem>({
   }
 
   const selectItem = (item?: T) => {
-    if(!item) return;
+    if(!item || isAdded(item)) return;
     onItemAdded(item);
+  }
+
+  const isAdded = (item: T) => {
+    return addedItems.some(element => item.id == element.id);
   }
 
   return (
@@ -55,7 +59,7 @@ export const ItemSearch = <T extends SearchItem>({
         const item = getItem(option.value);
         if (!item) return;
 
-        const isAdded = addedItems.some(element => item.id == element.id);
+        const alreadyAdded = isAdded(item);
 
         return (
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -68,14 +72,15 @@ export const ItemSearch = <T extends SearchItem>({
             )}
             <span style={{ flex: 1 }}>{option.label}</span>
             <Button
-              variant={isAdded ? "secondary" : "primary"}
-              disabled={isAdded}
+              variant={alreadyAdded ? "secondary" : "primary"}
+              disabled={alreadyAdded}
               onClick={(e: React.MouseEvent) => {
+                if(alreadyAdded) { return; }
                 e.stopPropagation();
                 onItemAdded(item);
               }}
             >
-              {isAdded ? "Added" : "Add"}
+              {alreadyAdded ? "Added" : "Add"}
             </Button>
           </div>
         );
