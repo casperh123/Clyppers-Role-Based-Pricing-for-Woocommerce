@@ -7,6 +7,7 @@ import { RoleRules } from "@/types/roleRules";
 import { AddRule } from "./AddRule";
 import { RuleKey } from "@/types/RuleKey";
 import { ItemRule } from "@/types/ItemRule";
+import { Icon, plus } from "@wordpress/icons";
 
 interface RulesPanelProps<T> {
   createRule: (item: T) => ItemRule,
@@ -54,7 +55,7 @@ export const RulesPanel = <T extends RuleItem>({
       <CollapsibleCard.Content>
         <div className="col">
           <div className="row">
-            <Button isDestructive={addRule} variant="primary" onClick={() => setAddRule(!addRule)}>{ addRule ? "Close" : "Add rule"}</Button>
+            <Button isDestructive={addRule} variant="primary" onClick={() => setAddRule(!addRule)}>{ addRule ? "Close" : <Icon icon={ plus }/>}</Button>
           </div>
         
          { addRule && (
