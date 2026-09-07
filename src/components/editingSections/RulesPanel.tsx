@@ -1,5 +1,5 @@
 import { Badge, CollapsibleCard } from "@wordpress/ui"
-import { Button } from "@wordpress/components";
+import { Button, Modal } from "@wordpress/components";
 import { useState } from "react";
 import { RuleList } from "../controls/RuleList";
 import { useFieldArray, useFormContext } from "react-hook-form";
@@ -59,7 +59,9 @@ export const RulesPanel = <T extends RuleItem>({
           </div>
         
          { addRule && (
-           <AddRule onAdd={onItemAdded} onSearch={onSearch} ruleKey={ruleKey}/>
+           <Modal onRequestClose={() => setAddRule(false)} size="medium">
+              <AddRule onAdd={onItemAdded} onSearch={onSearch} ruleKey={ruleKey}/>
+           </Modal>
          )}
           
          { fields.length == 0 ? (

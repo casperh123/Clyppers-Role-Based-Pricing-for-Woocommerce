@@ -22,7 +22,7 @@ export const createRuleFromCategory = (category: Category): ItemRule => {
     rule: itemRule(),
     quantity_rule: itemRule(),
     min_qty: 0,
-    image_url: category.image.src
+    image_url: category.image?.src ?? undefined
   }
 }
 

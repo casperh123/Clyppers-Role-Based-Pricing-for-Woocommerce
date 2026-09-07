@@ -4,7 +4,8 @@ export interface ItemRule {
   id: number;
   name: string;
   rule: PricingRule;
+  quantity_rule: PricingRule;
   min_qty: number;
-  image_url: string;
+  image_url?: string;
   price_html?: string;
 }
