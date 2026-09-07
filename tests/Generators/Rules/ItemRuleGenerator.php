@@ -4,6 +4,7 @@ namespace Generators\Rules;
 
 use ClypperTechnology\RolePricing\Rules\ItemRule;
 use ClypperTechnology\RolePricing\Rules\Rule;
+use ClypperTechnology\RolePricing\Rules\RuleType;
 
 class ItemRuleGenerator
 {
@@ -43,8 +44,8 @@ class ItemRuleGenerator
         return new ItemRule(
             $id,
             $name,
-            $rule ?? new Rule(Rule::TYPE_PERCENT, 0),
-            $quantity_rule ?? new Rule(Rule::TYPE_PERCENT, 0),
+            $rule ?? new Rule(RuleType::TYPE_PERCENT, 0),
+            $quantity_rule ?? new Rule(RuleType::TYPE_PERCENT, 0),
             $min_qty
         );
     }
@@ -54,8 +55,8 @@ class ItemRuleGenerator
         return new ItemRule(
             -1,
             "rule",
-            $rule ?? new Rule(Rule::TYPE_PERCENT, 0),
-            $quantity_rule ?? new Rule(Rule::TYPE_PERCENT, 0),
+            $rule ?? new Rule(RuleType::TYPE_PERCENT, 0),
+            $quantity_rule ?? new Rule(RuleType::TYPE_PERCENT, 0),
             $min_qty
         );
     }

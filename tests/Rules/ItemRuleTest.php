@@ -4,6 +4,7 @@ namespace Rules;
 
 use ClypperTechnology\RolePricing\Rules\ItemRule;
 use ClypperTechnology\RolePricing\Rules\Rule;
+use ClypperTechnology\RolePricing\Rules\RuleType;
 use Generators\Rules\ItemRuleGenerator;
 use PHPUnit\Framework\TestCase;
 
@@ -12,7 +13,7 @@ class ItemRuleTest extends TestCase
     public function testRegularRuleApplies(): void
     {
         $rule = ItemRuleGenerator::with_rules(
-            rule: new Rule(Rule::TYPE_FIXED, 100)
+            rule: new Rule(RuleType::TYPE_FIXED, 100)
         );
 
         $price = $rule->calculatePrice(1000);
@@ -23,8 +24,8 @@ class ItemRuleTest extends TestCase
     public function testQuantityRuleAppliesWhenQuantityMeetsMinimum(): void
     {
         $rule = ItemRuleGenerator::with_rules(
-            rule: new Rule(Rule::TYPE_FIXED, 100),
-            quantity_rule: new Rule(Rule::TYPE_FIXED, 500),
+            rule: new Rule(RuleType::TYPE_FIXED, 100),
+            quantity_rule: new Rule(RuleType::TYPE_FIXED, 500),
             min_qty: 10
         );
 
@@ -36,8 +37,8 @@ class ItemRuleTest extends TestCase
     public function testQuantityRuleAppliesWhenQuantityExceedsMinimum(): void
     {
         $rule = ItemRuleGenerator::with_rules(
-            rule: new Rule(Rule::TYPE_FIXED, 100),
-            quantity_rule: new Rule(Rule::TYPE_FIXED, 500),
+            rule: new Rule(RuleType::TYPE_FIXED, 100),
+            quantity_rule: new Rule(RuleType::TYPE_FIXED, 500),
             min_qty: 10
         );
 
@@ -49,8 +50,8 @@ class ItemRuleTest extends TestCase
     public function testRegularRuleAppliesWhenQuantityIsBelowMinimum(): void
     {
         $rule = ItemRuleGenerator::with_rules(
-            rule: new Rule(Rule::TYPE_FIXED, 100),
-            quantity_rule: new Rule(Rule::TYPE_FIXED, 500),
+            rule: new Rule(RuleType::TYPE_FIXED, 100),
+            quantity_rule: new Rule(RuleType::TYPE_FIXED, 500),
             min_qty: 10
         );
 
@@ -62,7 +63,7 @@ class ItemRuleTest extends TestCase
     public function testRegularRuleAppliesWhenNoQuantityRuleIsSet(): void
     {
         $rule = ItemRuleGenerator::with_rules(
-            rule: new Rule(Rule::TYPE_FIXED, 100)
+            rule: new Rule(RuleType::TYPE_FIXED, 100)
         );
 
         $price = $rule->calculatePrice(1000, 100);
@@ -82,8 +83,8 @@ class ItemRuleTest extends TestCase
     public function testQuantityRuleCanUseDifferentTypeThanRegularRule(): void
     {
         $rule = ItemRuleGenerator::with_rules(
-            rule: new Rule(Rule::TYPE_FIXED, 100),
-            quantity_rule: new Rule(Rule::TYPE_PERCENT, 50),
+            rule: new Rule(RuleType::TYPE_FIXED, 100),
+            quantity_rule: new Rule(RuleType::TYPE_PERCENT, 50),
             min_qty: 10
         );
 
@@ -95,8 +96,8 @@ class ItemRuleTest extends TestCase
     public function testQuantityBoundaryIsInclusive(): void
     {
         $rule = ItemRuleGenerator::with_rules(
-            rule: new Rule(Rule::TYPE_FIXED, 100),
-            quantity_rule: new Rule(Rule::TYPE_FIXED, 500),
+            rule: new Rule(RuleType::TYPE_FIXED, 100),
+            quantity_rule: new Rule(RuleType::TYPE_FIXED, 500),
             min_qty: 10
         );
 
@@ -110,7 +111,7 @@ class ItemRuleTest extends TestCase
     public function testQuantityReductionAppliesWhenQuantityMeetsMinimum(): void
     {
         $rule = ItemRuleGenerator::with_rules(
-            quantity_rule: new Rule(Rule::TYPE_FIXED, 500),
+            quantity_rule: new Rule(RuleType::TYPE_FIXED, 500),
             min_qty: 10
         );
 
@@ -122,7 +123,7 @@ class ItemRuleTest extends TestCase
     public function testQuantityReductionDoesNotApplyWhenQuantityIsBelowMinimum(): void
     {
         $rule = ItemRuleGenerator::with_rules(
-            quantity_rule: new Rule(Rule::TYPE_FIXED, 500),
+            quantity_rule: new Rule(RuleType::TYPE_FIXED, 500),
             min_qty: 10
         );
 
@@ -134,7 +135,7 @@ class ItemRuleTest extends TestCase
     public function testQuantityReductionDoesNotApplyWhenQuantityRuleHasNoValue(): void
     {
         $rule = ItemRuleGenerator::with_rules(
-            quantity_rule: new Rule(Rule::TYPE_FIXED, 0),
+            quantity_rule: new Rule(RuleType::TYPE_FIXED, 0),
             min_qty: 10
         );
 
@@ -146,7 +147,7 @@ class ItemRuleTest extends TestCase
     public function testReductionAppliesForRegularRule(): void
     {
         $rule = ItemRuleGenerator::with_rules(
-            rule: new Rule(Rule::TYPE_FIXED, 100)
+            rule: new Rule(RuleType::TYPE_FIXED, 100)
         );
 
         $this->assertTrue(
@@ -157,7 +158,7 @@ class ItemRuleTest extends TestCase
     public function testReductionAppliesForQuantityRule(): void
     {
         $rule = ItemRuleGenerator::with_rules(
-            quantity_rule: new Rule(Rule::TYPE_FIXED, 500),
+            quantity_rule: new Rule(RuleType::TYPE_FIXED, 500),
             min_qty: 10
         );
 
@@ -187,7 +188,7 @@ class ItemRuleTest extends TestCase
     public function testQuantityReductionMessageIsNullWhenMinimumQuantityIsZero(): void
     {
         $rule = ItemRuleGenerator::with_rules(
-            quantity_rule: new Rule(Rule::TYPE_FIXED, 100),
+            quantity_rule: new Rule(RuleType::TYPE_FIXED, 100),
             min_qty: 0
         );
 
@@ -201,8 +202,8 @@ class ItemRuleTest extends TestCase
         $rule = ItemRuleGenerator::with(
             id: 123,
             name: 'Test rule',
-            rule: new Rule(Rule::TYPE_FIXED, 100),
-            quantity_rule: new Rule(Rule::TYPE_FIXED, 500),
+            rule: new Rule(RuleType::TYPE_FIXED, 100),
+            quantity_rule: new Rule(RuleType::TYPE_FIXED, 500),
             min_qty: 10
         );
 
@@ -221,11 +222,11 @@ class ItemRuleTest extends TestCase
             'id' => 123,
             'name' => 'Test rule',
             'rule' => [
-                'type' => Rule::TYPE_FIXED,
+                'type' => "fixed",
                 'value' => 100,
             ],
             'quantity_rule' => [
-                'type' => Rule::TYPE_FIXED,
+                'type' => "fixed",
                 'value' => 500,
             ],
             'min_qty' => 10,

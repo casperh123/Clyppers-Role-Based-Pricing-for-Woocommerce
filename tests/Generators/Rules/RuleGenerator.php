@@ -3,6 +3,7 @@
 namespace Generators\Rules;
 
 use ClypperTechnology\RolePricing\Rules\Rule;
+use ClypperTechnology\RolePricing\Rules\RuleType;
 
 class RuleGenerator
 {
@@ -25,14 +26,14 @@ class RuleGenerator
         );
     }
 
-    private static function generateValue(string $type): int
+    private static function generateValue(RuleType $type): int
     {
         return match ($type) {
-            "percent" => random_int(1, 100),
-            "percent_add" => random_int(1, 1000),
-            "fixed" => random_int(1, 100),
-            "fixed_set" => random_int(1, 1_000_000),
-            "fixed_add" => random_int(1, 100),
+            RuleType::TYPE_PERCENT => random_int(1, 100),
+            RuleType::TYPE_FIXED_ADD => random_int(1, 1000),
+            RuleType::TYPE_FIXED => random_int(1, 100),
+            RuleType::TYPE_FIXED_SET => random_int(1, 1_000_000),
+            RuleType::TYPE_PERCENT_ADD => random_int(1, 100),
         };
     }
 }

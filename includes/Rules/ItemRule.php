@@ -15,8 +15,8 @@ class ItemRule implements PricingRule
     public function __construct(
         int $id,
         string $name,
-        Rule $rule = new Rule(Rule::TYPE_PERCENT, 0),
-        Rule $quantity_rule = new Rule(Rule::TYPE_PERCENT, 0),
+        Rule $rule = new Rule(RuleType::TYPE_PERCENT, 0),
+        Rule $quantity_rule = new Rule(RuleType::TYPE_PERCENT, 0),
         int $min_qty = 0,
     ) {
         $this->id = $id;
@@ -52,9 +52,9 @@ class ItemRule implements PricingRule
         }
 
         return match ($this->quantity_rule->type) {
-            Rule::TYPE_PERCENT => "Køb {$this->min_quantity}+ og spar {$this->quantity_rule->value}%",
+            RuleType::TYPE_PERCENT => "Køb {$this->min_quantity}+ og spar {$this->quantity_rule->value}%",
 
-            Rule::TYPE_FIXED =>
+            RuleType::TYPE_FIXED =>
                 "Køb {$this->min_quantity}+ og spar " .
                 wc_price(
                     $this->quantity_rule->value,
@@ -62,7 +62,7 @@ class ItemRule implements PricingRule
                 ) .
                 " pr. stk.",
 
-            Rule::TYPE_FIXED_SET =>
+            RuleType::TYPE_FIXED_SET =>
                 "Køb {$this->min_quantity} for " .
                 wc_price(
                     $this->quantity_rule->value,

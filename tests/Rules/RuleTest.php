@@ -3,6 +3,7 @@
     namespace Rules;
 
     use ClypperTechnology\RolePricing\Rules\Rule;
+    use ClypperTechnology\RolePricing\Rules\RuleType;
     use Generators\Rules\RuleGenerator;
     use PHPUnit\Framework\TestCase;
 
@@ -14,7 +15,7 @@
             // Arrange
             $price = 100;
             $reduction = 50;
-            $rule = RuleGenerator::with(Rule::TYPE_PERCENT, $reduction);
+            $rule = RuleGenerator::with(RuleType::TYPE_PERCENT, $reduction);
             $manual_price_calculation = $price * ($reduction / 100);
 
             // Act
@@ -31,7 +32,7 @@
             // Arrange
             $price = 100;
             $increase = 50;
-            $rule = RuleGenerator::with(Rule::TYPE_PERCENT_ADD, $increase);
+            $rule = RuleGenerator::with(RuleType::TYPE_PERCENT_ADD, $increase);
             $manual_price_calculation = $price * (1 + ($increase / 100));
 
             // Act
@@ -48,7 +49,7 @@
             // Arrange
             $price = 100;
             $decrease = 99;
-            $rule = RuleGenerator::with(Rule::TYPE_FIXED, $decrease);
+            $rule = RuleGenerator::with(RuleType::TYPE_FIXED, $decrease);
             $manual_price_calculation = $price - $decrease;
 
             // Act
@@ -65,7 +66,7 @@
             // Arrange
             $price = 100;
             $increase = 99;
-            $rule = RuleGenerator::with(Rule::TYPE_FIXED_ADD, $increase);
+            $rule = RuleGenerator::with(RuleType::TYPE_FIXED_ADD, $increase);
             $manual_price_calculation = $price + $increase;
 
             // Act
@@ -82,7 +83,7 @@
             // Arrange
             $price = 100;
             $fixed = 9;
-            $rule = RuleGenerator::with(Rule::TYPE_FIXED_SET, $fixed);
+            $rule = RuleGenerator::with(RuleType::TYPE_FIXED_SET, $fixed);
 
             // Act
             $caclculated_price = $rule->calculatePrice($price);
