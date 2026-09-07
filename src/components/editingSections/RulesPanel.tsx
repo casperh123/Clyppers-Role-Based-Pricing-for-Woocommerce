@@ -63,7 +63,7 @@ export const RulesPanel = <T extends RuleItem>({
          )}
           
          { fields.length == 0 ? (
-          <p>There are not rules yet!</p>
+          <p>There are no rules yet!</p>
          ) : (
           <RuleList fields={fields} onRemove={remove} ruleKey={ruleKey}/>
          )}
