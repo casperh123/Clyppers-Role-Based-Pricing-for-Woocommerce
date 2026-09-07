@@ -6,7 +6,8 @@ import { RuleKey } from "@/types/RuleKey"
 interface AddRuleProps<T> {
   onAdd: (item: T) => void,
   onSearch: (search: string) => Promise<T[]>,
-  ruleKey: RuleKey
+  ruleKey: RuleKey,
+  modalTitle: string
 }
 
 interface AddRuleItem {
@@ -17,7 +18,8 @@ interface AddRuleItem {
 export const AddRule = <T extends AddRuleItem>({
   onAdd,
   onSearch,
-  ruleKey: key
+  ruleKey: key,
+  modalTitle
 }: AddRuleProps<T>) => {
   const { watch } = useFormContext<RoleRules>();
   const items = watch(key);
@@ -34,6 +36,7 @@ export const AddRule = <T extends AddRuleItem>({
       onItemAdded={onAdd}
       searchItems={onSearch} 
       displayItem={displayItem}
+      modalTitle={modalTitle}
       addedItems={items}/>
   )
 }

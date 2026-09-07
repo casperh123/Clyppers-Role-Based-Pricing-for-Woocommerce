@@ -14,7 +14,8 @@ interface RulesPanelProps<T> {
   onSearch: (search: string) => Promise<T[]>,
   ruleKey: RuleKey,
   title: string,
-  startOpen?: boolean
+  startOpen?: boolean,
+  modalTitle: string
 }
 
 interface RuleItem {
@@ -27,6 +28,7 @@ export const RulesPanel = <T extends RuleItem>({
   onSearch,
   createRule,
   title,
+  modalTitle,
   startOpen = false
 }: RulesPanelProps<T>) => {
   const [addRule, setAddRule] = useState<boolean>(false);
@@ -60,7 +62,7 @@ export const RulesPanel = <T extends RuleItem>({
         
          { addRule && (
            <Modal onRequestClose={() => setAddRule(false)} size="medium">
-              <AddRule onAdd={onItemAdded} onSearch={onSearch} ruleKey={ruleKey}/>
+              <AddRule onAdd={onItemAdded} onSearch={onSearch} ruleKey={ruleKey} modalTitle={modalTitle}/>
            </Modal>
          )}
           

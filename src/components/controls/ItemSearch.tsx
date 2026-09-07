@@ -1,6 +1,4 @@
 import { Button, ComboboxControl } from "@wordpress/components"
-import { search } from "@wordpress/icons";
-import { filterUnitsWithSettings } from "node_modules/@wordpress/components/build-types/unit-control/utils";
 import { useState, useTransition } from "react"
 
 export interface SearchItem {
@@ -12,6 +10,7 @@ export interface ItemSearchProps<T extends SearchItem> {
   searchItems: (search: string) => Promise<T[]>,
   displayItem: (item: T) => DisplayItem,
   onItemAdded: (item: T) => void,
+  modalTitle: string,
   addedItems?: Array<T>,
 }
 
@@ -24,6 +23,7 @@ export const ItemSearch = <T extends SearchItem>({
   searchItems,
   displayItem,
   onItemAdded,
+  modalTitle,
   addedItems = [],
 }: ItemSearchProps<T>) => {
   const [items, setItems] = useState<T[]>([]);
@@ -54,7 +54,7 @@ export const ItemSearch = <T extends SearchItem>({
 
   return (
     <ComboboxControl
-      label="Search for product"
+      label={modalTitle}
       options={options}
       onFilterValueChange={onInputChange}
       onChange={(value) => selectItem(getItem(value ?? ""))}

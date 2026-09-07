@@ -73,12 +73,15 @@ export function Rules() {
               onSearch={searchProducts}
               ruleKey="products"
               startOpen={true}
+              modalTitle="Add new product"
               />
             <RulesPanel
               title="Category Rules"
               createRule={(category) => createRuleFromCategory(category)}
               onSearch={searchCategories}
-              ruleKey="single_categories" />
+              ruleKey="single_categories" 
+              modalTitle="Add new category"
+              />
           </div>
         </form>
       </FormProvider>
