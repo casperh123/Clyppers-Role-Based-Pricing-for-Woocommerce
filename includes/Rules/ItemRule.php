@@ -63,7 +63,7 @@ class ItemRule implements PricingRule
                 " pr. stk.",
 
             Rule::TYPE_FIXED_SET =>
-                " @wordpress/components{$this->min_quantity} for " .
+                "Køb {$this->min_quantity} for " .
                 wc_price(
                     $this->quantity_rule->value,
                     ['in_span' => false]
