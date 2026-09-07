@@ -19,8 +19,9 @@
     "dependencies": {
         "@types/wordpress__components": "^23.8.0",
         "@wordpress/api-fetch": "^7.54.0",
-        "@wordpress/ui": "^0.21.0",
+        "@wordpress/compose": "^8.7.0",
         "@wordpress/icons": "^15.5.0",
+        "@wordpress/ui": "^0.21.0",
         "react-hook-form": "^7.87.0",
         "react-router-dom": "^7.18.3"
     }

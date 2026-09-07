@@ -1,4 +1,5 @@
 import { Button, ComboboxControl } from "@wordpress/components"
+import { useDebounce } from "@wordpress/compose";
 import { useState, useTransition } from "react"
 
 export interface SearchItem {
@@ -31,13 +32,16 @@ export const ItemSearch = <T extends SearchItem>({
   const [isPending, setTransition] = useTransition();
 
 
-  const onInputChange = (inputValue: string) => {
+  const runSearch = (inputValue: string) => {
     setTransition(async () => {
       const fetchedItems = await searchItems(inputValue);
       const filteredItems = fetchedItems.filter(item => !isAdded(item));
       setItems(filteredItems);
     })
   };
+
+  const onInputChanged = useDebounce(runSearch, 500);
+
 
   const getItem = (value?: string) => {
     return items.find(p => String(p.id) === value);
@@ -56,7 +60,7 @@ export const ItemSearch = <T extends SearchItem>({
     <ComboboxControl
       label={modalTitle}
       options={options}
-      onFilterValueChange={onInputChange}
+      onFilterValueChange={onInputChanged}
       onChange={(value) => selectItem(getItem(value ?? ""))}
       isLoading={isPending}
       __experimentalRenderItem={({ item: option }) => {
