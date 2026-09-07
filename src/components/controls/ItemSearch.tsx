@@ -1,4 +1,6 @@
 import { Button, ComboboxControl } from "@wordpress/components"
+import { search } from "@wordpress/icons";
+import { filterUnitsWithSettings } from "node_modules/@wordpress/components/build-types/unit-control/utils";
 import { useState, useTransition } from "react"
 
 export interface SearchItem {
@@ -31,7 +33,9 @@ export const ItemSearch = <T extends SearchItem>({
 
   const onInputChange = (inputValue: string) => {
     setTransition(async () => {
-      setItems(await searchItems(inputValue));
+      const fetchedItems = await searchItems(inputValue);
+      const filteredItems = fetchedItems.filter(item => !isAdded(item));
+      setItems(filteredItems);
     })
   };
 
