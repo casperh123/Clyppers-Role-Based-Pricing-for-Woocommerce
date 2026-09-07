@@ -53,7 +53,17 @@
             $by_name = wc_get_products([ 's'      => $search, 'limit' => 20 ]);
             $by_sku  = wc_get_products([ 'sku'    => $search, 'limit' => 20 ]);
 
-            return array_unique( array_merge( $by_name, $by_sku ) );
+            $products = [];
+
+            foreach ($by_name as $product) {
+                $products[$product->get_id()] = $product;
+            }
+
+            foreach ($by_sku as $product) {
+                $products[$product->get_id()] = $product;
+            }
+
+            return $products;
         }
 
         /**
