@@ -46,20 +46,19 @@ export const RulesPanel = <T extends RuleItem>({
   return (
     <CollapsibleCard.Root defaultOpen={startOpen}>
       <CollapsibleCard.Header>
-        <div className="row">
+        <div className="row" style={{justifyContent: "space-between", alignItems: "flex-start"}}>
+          <div className="row">
           <h2>{title}</h2>
           <Badge intent="draft">
             {`${fields.length}`}
           </Badge>
+          </div>
+          <Button isDestructive={addRule} onClick={() => setAddRule(!addRule)}>{ addRule ? "Close" : <Icon icon={ plus }/>}</Button>
         </div>
       </CollapsibleCard.Header>
 
       <CollapsibleCard.Content>
         <div className="col">
-          <div className="row">
-            <Button isDestructive={addRule} variant="primary" onClick={() => setAddRule(!addRule)}>{ addRule ? "Close" : <Icon icon={ plus }/>}</Button>
-          </div>
-        
          { addRule && (
            <Modal onRequestClose={() => setAddRule(false)} size="medium">
               <AddRule onAdd={onItemAdded} onSearch={onSearch} ruleKey={ruleKey} modalTitle={modalTitle}/>

@@ -83,13 +83,17 @@ class PriceRules
     }
 
     /**
-     * Get sale price with role discount
+     * Get price with role discount
      *
      * @param string $price current price.
      * @param WC_Product $product current product.
      */
     public function get_rule_price(string $price, WC_Product $product): string
     {
+        if (is_admin()) {
+          return $price;
+        }
+
         $cart_qty = $this->get_cart_item_qty($product->get_id());
         $calculated_price = $this->resolve_role_price($product, $cart_qty);
 
