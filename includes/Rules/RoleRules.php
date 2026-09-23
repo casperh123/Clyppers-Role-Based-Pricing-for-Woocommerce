@@ -55,6 +55,13 @@ class RoleRules {
         );
     }
 
+    public function copy_from_rule(RoleRules $from) {
+      $this->products = $from->products;
+      $this->single_categories = $from->single_categories;
+      $this->categories = $from->categories;
+      $this->global_rule = $from->global_rule;
+    }
+
 
     /**
      * Convert to array for storage (matches your exact structure)
