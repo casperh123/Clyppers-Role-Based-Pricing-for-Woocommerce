@@ -41,14 +41,6 @@ class RuleController extends \WP_REST_Controller
 
         register_rest_route( $this->namespace, '/' . $this->resource_name . '/(?P<id>\d+)', [
             [
-                'methods'             => \WP_REST_Server::DELETABLE,
-                'callback'            => [ $this, 'delete_item' ],
-                'permission_callback' => [ $this, 'permissions_check' ],
-            ],
-        ]);
-
-        register_rest_route( $this->namespace, '/' . $this->resource_name . '/(?P<id>\d+)', [
-            [
                 'methods'             => \WP_REST_Server::EDITABLE,
                 'callback'            => [ $this, 'update_rule' ],
                 'permission_callback' => [ $this, 'permissions_check' ],
@@ -82,18 +74,11 @@ class RuleController extends \WP_REST_Controller
         return new \WP_REST_Response($id, 200);
     }
 
-    public function delete_item( $request ): \WP_REST_Response
-    {
-        $this->rule_service->delete_rule( $request->get_param( 'id' ) );
-
-        return new \WP_REST_Response( null, 204 );
-    }
-
     public function update_rule(\WP_REST_Request $request ): \WP_REST_Response {
         $request_json = $request->get_json_params();
         $rule = RoleRules::from_array($request_json);
 
-        $this->rule_service->update_rule($rule);
+        $this->rule_service->save_role_rules($rule);
 
         return new \WP_REST_Response(null, 204);
     }

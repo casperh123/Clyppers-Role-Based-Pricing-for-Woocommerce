@@ -2,7 +2,6 @@
 
 namespace ClypperTechnology\RolePricing\Services;
 
-use Automattic\WooCommerce\Api\NotFoundException;
 use ClypperTechnology\RolePricing\Rules\RoleRules;
 use InvalidArgumentException;
 use RuntimeException;
@@ -41,17 +40,6 @@ class RuleService {
             'order'       => 'ASC',
             'post_status' => 'any'
         ]);
-    }
-
-    public function update_rule( RoleRules $rule ): bool {
-        return $this->save_role_rules($rule);
-    }
-
-    /**
-     * Delete rule
-     */
-    public function delete_rule( string $id ): void {
-        wp_delete_post( $id, true );
     }
 
     /**
@@ -102,6 +90,7 @@ class RuleService {
             'post_title' => $role_rules->role_slug,
             'post_content' => wp_json_encode($role_rules->to_array(), JSON_UNESCAPED_UNICODE),
             'post_author' => get_current_user_id(),
+            'post_type' => 'clypper_rpp'
         ], true);
 
         return !is_wp_error($result);
