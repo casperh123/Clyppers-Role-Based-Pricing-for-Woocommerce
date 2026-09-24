@@ -121,7 +121,7 @@ class PriceRules
 
     public function role_price(RoleRules $rule, WC_Product $product, int $cart_qty): ?float
     {
-        $applicable_rule = $this->get_applicable_rule($rule, $product);
+        $applicable_rule = $this->get_applicable_rule($rule, $product, $cart_qty);
 
         if(!$applicable_rule) {
             return null;
@@ -244,7 +244,7 @@ class PriceRules
         }
     }
 
-    private function get_applicable_rule(RoleRules $rule, WC_Product $product): ?PricingRule
+    private function get_applicable_rule(RoleRules $rule, WC_Product $product, int $cart_qty): ?PricingRule
     {
         $category_ids = $this->get_category_ids($product);
 
@@ -252,7 +252,7 @@ class PriceRules
             $category_ids = [];
         }
 
-        return $rule->get_applicable_rule($product->get_id(), $category_ids);
+        return $rule->get_applicable_rule($product->get_id(), $category_ids, $cart_qty);
     }
 
     private function get_quantity_rule(RoleRules $rule, WC_Product $product): ?ItemRule
