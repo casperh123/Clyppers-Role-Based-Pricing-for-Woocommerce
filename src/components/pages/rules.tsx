@@ -9,6 +9,7 @@ import { RulesPanel } from "../editingSections/RulesPanel";
 import { ProductService } from "@/services/productService";
 import { createRuleFromCategory, createRuleFromProduct } from "@/factories/itemRuleFactory";
 import { CategoryService } from "@/services/categoryService";
+import { CopyRule } from "../editingSections/CopyRule";
 
 export function Rules() {
   const { id } = useParams<{ id: string }>();
@@ -57,15 +58,16 @@ export function Rules() {
     <div>
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
-          <div className="row">
+          <div className="row" style={{marginBottom: 40}}>
             <Icon icon={arrowLeft} onClick={(() => navigate(-1))} style={{ cursor: "pointer" }}/>
             <h1>{rule?.role_name}</h1>
           </div>
           <div className="roles-list">
-            <div>
+            <div className="row" style={{ justifyContent: "space-between", alignItems: "center"}}>
               <Button type="submit" variant={isDirty ? "primary" : "secondary"}  disabled={isSaving || !isDirty}>
                 {isSaving ? "Saving…" : "Save"}
               </Button>
+              <CopyRule roleSlug={rule.role_slug}/>
             </div>
             <RulesPanel 
               title="Product Rules"

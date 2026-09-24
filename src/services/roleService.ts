@@ -24,4 +24,14 @@ export class RoleService {
       data: role
     });
   }
+
+  public static async copyFrom(fromSlug: string, toSlug: string): Promise<void> {
+    return apiFetch({
+      path: ApiPath.roleSlugCopyFromPath(toSlug),
+      method: "POST",
+      data: {
+        copy_rule_slug: fromSlug
+      }
+    });
+  }
 }

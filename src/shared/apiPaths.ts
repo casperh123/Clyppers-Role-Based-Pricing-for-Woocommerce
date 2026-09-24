@@ -20,6 +20,10 @@ export class ApiPath {
     return this.rolesPath() + "/" + roleId;
   }
 
+  public static roleSlugCopyFromPath(roleSlug: string): string {
+    return this.rolesPath() + "/" + roleSlug + "/copyFrom";
+  }
+
   public static productPathSearch(searchQuery: string): string {
     return `${ApiBase.Base}${ApiBase.Product}?search=${searchQuery}`
   }

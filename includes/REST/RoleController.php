@@ -82,30 +82,23 @@ class RoleController extends  \WP_REST_Controller
         return new \WP_REST_Response($rule, 200);
     }
 
-    public function copy_rule( \WP_REST_Request $request ) {
-      $slug = $request->get_param("slug");
+    public function copy_rule( \WP_REST_Request $request ): \WP_REST_Response
+    {
+      $slug = $this->sanitize_slug($request->get_param("slug"));
       $request_json = $request->get_json_params();
-      $copy_from_slug = $request_json['copy_rule_slug'] ?? null;
+      $copy_from_slug = $this->sanitize_slug($request_json['copy_rule_slug'] ?? null);
 
-      if(!$copy_from_slug || $slug == $copy_from_slug) {
-        return new \WP_REST_Response("No rule_id found in request body", 400);
+      if(!$copy_from_slug) {
+        return new \WP_REST_Response("No copy_from_slug found in request body", 400);
+      } elseif ($slug === $copy_from_slug) {
+          return new \WP_REST_Response("copy_rule_slug is the same as slug", 400);
       }
 
-      $rule = $this->ruleService->get_rule_by_user_role($slug);
+      $rule = $this->ruleService->copy_roles_from_rule( $slug, $copy_from_slug );
 
       if(!$rule) {
-        $rule = $this->ruleService->add_rule($slug);
+          return new \WP_REST_Response(null, 404);
       }
-
-      $copy_from_rule = $this->ruleService->get_rule_by_user_role($copy_from_slug);
-
-      if(!$copy_from_rule) {
-        return new \WP_REST_Response(null, 404);
-      }
-
-      $rule->copy_from_rule($copy_from_rule);
-      
-      $this->ruleService->save_role_rules($rule);
 
       return new \WP_REST_Response(null, 204);
     }

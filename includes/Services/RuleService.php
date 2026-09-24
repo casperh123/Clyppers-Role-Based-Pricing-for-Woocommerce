@@ -2,6 +2,7 @@
 
 namespace ClypperTechnology\RolePricing\Services;
 
+use Automattic\WooCommerce\Api\NotFoundException;
 use ClypperTechnology\RolePricing\Rules\RoleRules;
 use InvalidArgumentException;
 use RuntimeException;
@@ -133,5 +134,26 @@ class RuleService {
         $this->role_rules[$user_role] = $rule;
 
         return $rule;
+    }
+
+    public function copy_roles_from_rule(string $slug, string $copy_from_slug): ?RoleRules
+    {
+        $rule = $this->get_rule_by_user_role($slug);
+
+        if(!$rule) {
+            $rule = $this->add_rule($slug);
+        }
+
+        $copy_from_rule = $this->get_rule_by_user_role($copy_from_slug);
+
+        if(!$copy_from_rule) {
+            return null;
+        }
+
+        $rule->copy_from_rule($copy_from_rule);
+
+        $this->save_role_rules($rule);
+
+        return  $rule;
     }
 }

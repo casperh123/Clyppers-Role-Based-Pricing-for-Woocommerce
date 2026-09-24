@@ -8,9 +8,8 @@ export class CategoryService {
 
     const rule = await apiFetch<Category[]>({
       path: ApiPath.categoryPathSearch(query)
-    });
+    }); 
 
     return rule;
-
   }
 }
