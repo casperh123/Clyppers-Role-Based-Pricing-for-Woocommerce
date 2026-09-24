@@ -45,6 +45,8 @@ export const CopyRule = ({
 
   return (
     <div className="row">
+      <Button onClick={() => setOpenModal(true)} variant="primary" disabled={chosenSlug == null}>Copy rules to</Button>
+
       <SelectControl
         label="Copy rules to"
         items={options}
@@ -55,10 +57,8 @@ export const CopyRule = ({
         size="default"
         />
         
-      <Button onClick={() => setOpenModal(true)} variant="primary">Copy rules to</Button>
-
       { openModal && (
-        <Modal onRequestClose={() => setOpenModal(false)} size="small">
+        <Modal onRequestClose={() => !isPending && setOpenModal(false)} size="small">
           { isPending ? (
             <Spinner />
           ) : (
