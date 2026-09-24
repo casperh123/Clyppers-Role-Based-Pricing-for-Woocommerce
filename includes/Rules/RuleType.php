@@ -9,4 +9,5 @@ enum RuleType: string
     case TYPE_FIXED = 'fixed';
     case TYPE_FIXED_ADD = 'fixed_add';
     case TYPE_FIXED_SET = 'fixed_set';
+    case EMPTY = "";
 }

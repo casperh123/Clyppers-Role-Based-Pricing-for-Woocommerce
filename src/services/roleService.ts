@@ -10,9 +10,12 @@ export class RoleService {
   }
 
   public static async setRoleActive(role: Role, active: boolean): Promise<Role[]> {
-    role.active = active;
+    const updatedRole = {
+      ...role,
+      active,
+    };
 
-    await this.updateRole(role);
+    await this.updateRole(updatedRole);
 
     return this.getRoles();
   }

@@ -95,7 +95,7 @@ class RuleService {
                 )
             ),
             'post_author' => get_current_user_id(),
-            'post_type' => 'clypper_rpp'
+            'post_type' => 'clypper_rbp'
         ], true);
 
         return !is_wp_error($result);

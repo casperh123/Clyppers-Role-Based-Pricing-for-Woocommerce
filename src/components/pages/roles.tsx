@@ -32,7 +32,7 @@ export function Roles() {
           <Spinner />
         ) : (
          allRoles.map(role => (
-            <RoleCard role={role} onRoleChanged={(async (role) => await setActiveStatus(role, !role.active))}/>
+            <RoleCard key={role.id} role={role} onRoleChanged={(async (role) => await setActiveStatus(role, !role.active))}/>
           ))
         )}  
       </div>
