@@ -88,7 +88,12 @@ class RuleService {
         $result = wp_update_post([
             'ID' => $role_rules->id,
             'post_title' => $role_rules->role_slug,
-            'post_content' => wp_json_encode($role_rules->to_array(), JSON_UNESCAPED_UNICODE),
+            'post_content' => wp_slash(
+                wp_json_encode(
+                    $role_rules->to_array(),
+                    JSON_UNESCAPED_UNICODE
+                )
+            ),
             'post_author' => get_current_user_id(),
             'post_type' => 'clypper_rpp'
         ], true);

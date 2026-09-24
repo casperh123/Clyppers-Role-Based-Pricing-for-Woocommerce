@@ -28,7 +28,7 @@ class RoleRules {
      * Create RoleRules from WordPress post
      */
     public static function from_post(\WP_Post $post): self {
-        $content = json_decode($post->post_content, true) ?: [];
+        $content = json_decode(wp_unslash($post->post_content), true) ?: [];
 
         return new self(
             id: $post->ID,
