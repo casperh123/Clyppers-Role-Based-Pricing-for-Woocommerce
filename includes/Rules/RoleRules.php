@@ -55,11 +55,13 @@ class RoleRules {
         );
     }
 
-    public function copy_from_rule(RoleRules $from) {
+    public function copy_from_rule(RoleRules $from): void
+    {
       $this->products = $from->products;
       $this->single_categories = $from->single_categories;
       $this->categories = $from->categories;
       $this->global_rule = $from->global_rule;
+      $this->category_rule = $from->category_rule;
     }
 
 
