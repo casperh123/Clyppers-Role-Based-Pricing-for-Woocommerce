@@ -62,13 +62,13 @@ class RoleController extends  \WP_REST_Controller
 
     public function update_items( WP_REST_Request $request ): \WP_REST_Response {
         $request_rule = $request->get_json_params();
-        $rule = $this->ruleService->get_rules_by_id($request_rule["id"]);
+        $rule = $this->ruleService->get_rule_by_id($request_rule["id"]);
 
         if($rule) {
             $active = boolval($request["active"]);
 
             $rule->rule_active = $active;
-            $this->ruleService->save_role_rules($rule);
+            $this->ruleService->update_rule($rule);
 
             return new \WP_REST_Response($rule, 204);
         }
@@ -77,7 +77,7 @@ class RoleController extends  \WP_REST_Controller
 
         $rule = $this->ruleService->add_rule($role_slug);
         $rule->rule_active = true;
-        $this->ruleService->save_role_rules($rule);
+        $this->ruleService->update_rule($rule);
 
         return new \WP_REST_Response($rule, 200);
     }

@@ -55,7 +55,7 @@ class RuleController extends \WP_REST_Controller
 
     public function get_item($request): \WP_REST_Response {
         $id = $request->get_param("id");
-        $rule = $this->rule_service->get_rules_by_id($id);
+        $rule = $this->rule_service->get_rule_by_id($id);
 
         if(!$rule) {
             return new \WP_REST_Response(null, 404);
@@ -78,7 +78,7 @@ class RuleController extends \WP_REST_Controller
         $request_json = $request->get_json_params();
         $rule = RoleRules::from_array($request_json);
 
-        $this->rule_service->save_role_rules($rule);
+        $this->rule_service->update_rule($rule);
 
         return new \WP_REST_Response(null, 204);
     }
