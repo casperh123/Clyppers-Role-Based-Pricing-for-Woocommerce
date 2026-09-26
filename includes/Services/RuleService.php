@@ -4,19 +4,20 @@ namespace ClypperTechnology\RolePricing\Services;
 
 use ClypperTechnology\RolePricing\Rules\RoleRules;
 use InvalidArgumentException;
+use RuleCache;
 use RuntimeException;
 use WP_Post;
 
 defined( 'ABSPATH' ) || exit;
 
 class RuleService {
-    private array $role_rules;
     private RoleService $role_service;
+    private RuleCache $rule_cache;
 
     public function __construct( RoleService $role_service )
     {
-        $this->role_rules = array();
         $this->role_service = $role_service;
+        $this->rule_cache = new RuleCache();
     }
 
     /**
@@ -26,13 +27,13 @@ class RuleService {
     public function get_rule_by_current_role(): RoleRules | null {
         $user_role = $this->role_service->get_user_role();
 
-        return $this->get_rule_by_user_role($user_role);
+        return $this->get_rule_by_role($user_role);
     }
 
     /**
      * @return WP_Post[]
      */
-    private function get_all_rules(): array {
+    private function get_all_rule_posts(): array {
         return get_posts([
             'post_type'   => 'clypper_rbp',
             'numberposts' => -1,
@@ -41,18 +42,50 @@ class RuleService {
             'post_status' => 'any'
         ]);
     }
+    
+    private function get_rule_by_role(string $role): ?RoleRules {
+        $rule = $this->rule_cache->get_rule_by_role($role);
 
+        if($rule) {
+            return $rule;
+        }
+
+        $posts = get_posts([
+            'post_type' => 'clypper_rbp',
+            'numberposts' => 1,
+            'post_title' => $role
+        ]);
+
+        if(empty($posts)) {
+            return null;
+        }
+
+        $rule = $this->rule_from_post($posts[0]);
+
+        $this->rule_cache->add_rule($rule);
+        
+        return $rule;
+    }
+
+    private function rule_from_post(?WP_Post $post): ?RoleRules {
+        if (! $post || $post->post_type !== 'clypper_rbp') {
+            return null;
+        }
+
+        return RoleRules::from_post($post);
+    }
+    
     /**
      * Add rule
      *
-     * @param string $role_slug rule name.
+     * @param string $role rule name.
      * @return RoleRules Rule success
      * @throws InvalidArgumentException If rule already exists
      * @throws RuntimeException If creation fails
      */
-    public function add_rule(string $role_slug): RoleRules {
+    public function add_rule(string $role): RoleRules {
         $rule = [
-            'post_title'   => $role_slug,
+            'post_title'   => $role,
             'post_content' => '',
             'post_status'  => 'publish',
             'post_type'    => 'clypper_rbp',
@@ -65,20 +98,24 @@ class RuleService {
             throw new RuntimeException('Failed to create rule in database');
         }
 
-        return new RoleRules($rule_id, $role_slug, false);
+        return new RoleRules($rule_id, $role, false);
     }
 
     /**
      * Get RoleRules by ID
      */
     public function get_rules_by_id(int $rule_id): ?RoleRules {
-        $post = get_post($rule_id);
+        $rule = $this->rule_cache->get_rule($rule_id);
 
-        if (! $post || $post->post_type !== 'clypper_rbp') {
-            return null;
+        if($rule) {
+            return $rule;
         }
 
-        return RoleRules::from_post($post);
+        $post = get_post($rule_id);
+        $rule = $this->rule_from_post($post);
+        $this->rule_cache->add_rule($rule);
+
+        return $rule;
     }
 
     /**
@@ -106,39 +143,27 @@ class RuleService {
      *
      * @return RoleRules[]
      */
-    public function get_all_role_rules(): array {
-        $posts = $this->get_all_rules();
-        $roles = array_map(fn($post) => RoleRules::from_post($post), $posts);
+    public function get_all_rules(): array
+    {
+        $posts = $this->get_all_rule_posts();
+        $rules = array_map(fn($post) => RoleRules::from_post($post), $posts);
 
-        foreach($roles as $role) {
-            $this->role_rules[$role->role_slug] = $role;
+        foreach($rules as $rule) {
+            $this->rule_cache->add_rule($rule);
         }
 
-        return $roles;
-    }
-
-    public function get_rule_by_user_role( string $user_role): ?RoleRules {
-        if(array_key_exists($user_role, $this->role_rules)) {
-            return $this->role_rules[$user_role];
-        }
-
-        $all_rules = $this->get_all_role_rules();
-        $rule = array_find($all_rules, fn( RoleRules $rule ) => $rule->role_slug === $user_role );
-
-        $this->role_rules[$user_role] = $rule;
-
-        return $rule;
+        return $rules;
     }
 
     public function copy_roles_from_rule(string $slug, string $copy_from_slug): ?RoleRules
     {
-        $rule = $this->get_rule_by_user_role($slug);
+        $rule = $this->get_rule_by_role($slug);
 
         if(!$rule) {
             $rule = $this->add_rule($slug);
         }
 
-        $copy_from_rule = $this->get_rule_by_user_role($copy_from_slug);
+        $copy_from_rule = $this->get_rule_by_role($copy_from_slug);
 
         if(!$copy_from_rule) {
             return null;
