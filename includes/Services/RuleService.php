@@ -4,7 +4,7 @@ namespace ClypperTechnology\RolePricing\Services;
 
 use ClypperTechnology\RolePricing\Rules\RoleRules;
 use InvalidArgumentException;
-use RuleCache;
+use ClypperTechnology\RolePricing\Cache\RuleCache;
 use RuntimeException;
 use WP_Post;
 
@@ -43,8 +43,8 @@ class RuleService {
         ]);
     }
     
-    private function get_rule_by_role(string $role): ?RoleRules {
-        $rule = $this->rule_cache->get_rule_by_role($role);
+    private function get_rule_by_role(string $role_slug): ?RoleRules {
+        $rule = $this->rule_cache->get_rule_by_role_slug($role_slug);
 
         if($rule) {
             return $rule;
@@ -53,7 +53,7 @@ class RuleService {
         $posts = get_posts([
             'post_type' => 'clypper_rbp',
             'numberposts' => 1,
-            'post_title' => $role
+            'title' => $role_slug
         ]);
 
         if(empty($posts)) {
@@ -78,14 +78,14 @@ class RuleService {
     /**
      * Add rule
      *
-     * @param string $role rule name.
+     * @param string $slug rule name.
      * @return RoleRules Rule success
      * @throws InvalidArgumentException If rule already exists
      * @throws RuntimeException If creation fails
      */
-    public function add_rule(string $role): RoleRules {
+    public function add_rule(string $slug): RoleRules {
         $rule = [
-            'post_title'   => $role,
+            'post_title'   => $slug,
             'post_content' => '',
             'post_status'  => 'publish',
             'post_type'    => 'clypper_rbp',
@@ -98,7 +98,7 @@ class RuleService {
             throw new RuntimeException('Failed to create rule in database');
         }
 
-        return new RoleRules($rule_id, $role, false);
+        return new RoleRules($rule_id, $slug, false);
     }
 
     /**

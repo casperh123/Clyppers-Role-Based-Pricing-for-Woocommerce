@@ -54,7 +54,7 @@ class RoleController extends  \WP_REST_Controller
     }
 
     public function get_items( $request ): \WP_REST_Response {
-        $rules = $this->ruleService->get_all_role_rules();
+        $rules = $this->ruleService->get_all_rules();
         $roles = $this->roleService->get_all_roles($rules);
 
         return new \WP_REST_Response($roles, 200);

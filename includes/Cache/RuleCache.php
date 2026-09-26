@@ -1,22 +1,29 @@
 <?php
+
+namespace ClypperTechnology\RolePricing\Cache;
+
 use ClypperTechnology\RolePricing\Rules\RoleRules;
 
-defined( 'ABSPATH' ) || exit;
+defined('ABSPATH') || exit;
 
-class RuleCache {
+class RuleCache
+{
 
-    private RoleRules[] $rules = [];
+    private array $rules = [];
 
-    public function __construct() {
+    public function __construct()
+    {
     }
 
-    public function get_rule(int $id): ?RoleRules {
+    public function get_rule(int $id): ?RoleRules
+    {
         return $this->rules[$id] ?? null;
     }
 
-    public function get_rule_by_role(string $role): ?RoleRules {
+    public function get_rule_by_role_slug(string $role_slug): ?RoleRules
+    {
         foreach ($this->rules as $id => $rule) {
-            if($rule->slug == $role) {
+            if ($rule->slug == $role_slug) {
                 return $rule;
             }
         }
@@ -24,8 +31,9 @@ class RuleCache {
         return null;
     }
 
-    public function add_rule(?RoleRules $rule): void {
-        if($rule == null) {
+    public function add_rule(?RoleRules $rule): void
+    {
+        if ($rule == null) {
             return;
         }
 
