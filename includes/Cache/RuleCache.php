@@ -23,7 +23,7 @@ class RuleCache
     public function get_rule_by_role_slug(string $role_slug): ?RoleRules
     {
         foreach ($this->rules as $id => $rule) {
-            if ($rule->slug == $role_slug) {
+            if ($rule->role_slug == $role_slug) {
                 return $rule;
             }
         }
