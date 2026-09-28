@@ -43,7 +43,7 @@ Works with WooCommerce HPOS. Prices update on the shop page, product pages, and 
 
 == Installation ==
 
-1. Upload the plugin files to `/wp-content/plugins/clypper-role-based-pricing`, or install through the WordPress plugins screen.
+1. Upload the plugin files to `/wp-content/plugins/clyppers-role-based-pricing-for-woocommerce`, or install through the WordPress plugins screen.
 2. Activate the plugin.
 3. Make sure WooCommerce is installed and active.
 4. Go to WooCommerce > Roles Rules to set up pricing.

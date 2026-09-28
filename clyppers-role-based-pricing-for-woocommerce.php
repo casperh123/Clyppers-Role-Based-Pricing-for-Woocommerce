@@ -5,7 +5,7 @@
  * Description: Enables role-based pricing, dynamic discounts, VAT exemptions and much more to create tailored B2B and B2C shopping experiences.
  * Version: 1.0.0
  * Author: Casper Holten
- * Text Domain: clypper-role-based-pricing
+ * Text Domain: clyppers-role-based-pricing-for-woocommerce
  * Author URI:        https://clyppertechnology.com
  * Domain Path: /languages
  *
@@ -84,8 +84,8 @@ add_action( 'init', function() {
 
     register_post_type( 'clypper_rbp', [
         'labels' => [
-            'name'          => _x( 'Rules', 'Post Type General Name', 'clypper-role-based-pricing' ),
-            'singular_name' => _x( 'Rule', 'Post Type Singular Name', 'clypper-role-based-pricing' ),
+            'name'          => _x( 'Rules', 'Post Type General Name', 'clyppers-role-based-pricing-for-woocommerce' ),
+            'singular_name' => _x( 'Rule', 'Post Type Singular Name', 'clyppers-role-based-pricing-for-woocommerce' ),
         ],
         'public'              => false,
         'publicly_queryable'  => false,

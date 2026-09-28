@@ -40,7 +40,7 @@ A rule can include a minimum quantity. Once a customer's cart quantity for an it
 
 ## Installation
 
-1. Clone or download this repository into `wp-content/plugins/clypper-role-based-pricing`
+1. Clone or download this repository into `wp-content/plugins/clyppers-role-based-pricing-for-woocommerce`
 2. Run `composer install` to install PHP dependencies
 3. Run `npm install && npm run build` to build the admin UI
 4. Activate the plugin in WordPress with WooCommerce active
