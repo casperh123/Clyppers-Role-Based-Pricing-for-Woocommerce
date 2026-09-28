@@ -1,22 +1,20 @@
 <?php
 /**
- *
- * Plugin Name: Clypper's Role Based Pricing
- * Description: Enables role-based pricing, dynamic discounts, VAT exemptions and much more to create tailored B2B and B2C shopping experiences.
- * Version: 1.0.0
- * Author: Casper Holten
- * Text Domain: clyppers-role-based-pricing-for-woocommerce
- * Author URI:        https://clyppertechnology.com
- * Domain Path: /languages
- *
- * Tested up to: 7.1
- * Requires at least: 6.8.0
- * Requires PHP: 8.2
+ * Plugin Name:          Clypper's Role Based Pricing for WooCommerce
+ * Description:          Set prices per user role with global, category and product rules, plus quantity price breaks.
+ * Version:              1.0.0
+ * Requires at least:    6.8
+ * Requires PHP:         8.2
+ * Requires Plugins:     woocommerce
+ * Author:               Casper Holten
+ * Author URI:           https://clyppertechnology.com
+ * License:              GPLv3
+ * License URI:          https://www.gnu.org/licenses/gpl-3.0.html
+ * Text Domain:          clyppers-role-based-pricing-for-woocommerce
  * WC requires at least: 9.6
- * WC tested up to: 11.0.1
+ * WC tested up to:      11.0.1
  *
  * Copyright: © 2026 Casper Holten.
- * License: GNU General Public License v3.0
  */
 
 use Automattic\WooCommerce\Utilities\FeaturesUtil;
@@ -32,8 +30,7 @@ defined( 'ABSPATH' ) || exit;
 
 require_once plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
 
-const CAS_ROLES_RULES_VS   = '1.0.0';
-
+define( 'CRBP_VERSION', '1.0.0' );
 define( 'CRBP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'CRBP_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 

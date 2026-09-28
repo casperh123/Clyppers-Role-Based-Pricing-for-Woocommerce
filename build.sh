@@ -6,11 +6,12 @@ DIST_DIR="dist"
 BUILD_DIR="${DIST_DIR}/${PLUGIN_NAME}"
 VERSION=$(grep -oP 'Version:\s*\K[\d.]+' "${PLUGIN_NAME}.php")
 STABLE_TAG=$(grep -oP 'Stable tag:\s*\K[\d.]+' readme.txt)
+CONST_VERSION=$(grep -oP "define\(\s*'CRBP_VERSION',\s*'\K[\d.]+" "${PLUGIN_NAME}.php")
 BUILD_FILE="${PLUGIN_NAME}-${VERSION}.zip"
 
-# Header version and readme stable tag must match
-if [[ "$VERSION" != "$STABLE_TAG" ]]; then
-    echo "Version mismatch: plugin header=${VERSION}, readme Stable tag=${STABLE_TAG}" >&2
+# Header version, readme stable tag and CRBP_VERSION must match
+if [[ "$VERSION" != "$STABLE_TAG" || "$VERSION" != "$CONST_VERSION" ]]; then
+    echo "Version mismatch: plugin header=${VERSION}, readme Stable tag=${STABLE_TAG}, CRBP_VERSION=${CONST_VERSION}" >&2
     exit 1
 fi
 

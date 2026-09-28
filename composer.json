@@ -1,6 +1,12 @@
 {
     "name": "clypper-technology/role-pricing",
-    "type": "library",
+    "description": "Role-based pricing and quantity price breaks for WooCommerce.",
+    "type": "wordpress-plugin",
+    "license": "GPL-3.0-only",
+
+    "require": {
+        "php": ">=8.2"
+    },
 
     "autoload": {
         "psr-4": {

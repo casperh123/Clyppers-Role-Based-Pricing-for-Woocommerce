@@ -13,7 +13,7 @@ final class RoleRulesDTO
      */
     public function __construct(
         public RoleRules $rules,
-        public string $role_name = "",
+        public string $role_name,
         public array $products,
     ) {
     }

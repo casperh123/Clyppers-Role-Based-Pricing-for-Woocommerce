@@ -1,13 +1,17 @@
 {
-    "plugins": [
-      ".",
-      "https://downloads.wordpress.org/plugin/woocommerce.latest-stable.zip"
-    ],
-    "phpVersion": "8.3",
+    "plugins": [],
+    "mappings": {
+      "wp-content/plugins/woocommerce": "https://downloads.wordpress.org/plugin/woocommerce.latest-stable.zip",
+      "wp-content/plugins/clyppers-role-based-pricing-for-woocommerce": "."
+    },
+    "phpVersion": "8.2",
     "config": {
       "WP_DEBUG": true,
       "WP_DEBUG_LOG": true,
       "WP_DEBUG_DISPLAY": true,
       "SCRIPT_DEBUG": true
-    }}
- 
+    },
+    "lifecycleScripts": {
+      "afterStart": "npx -y @wordpress/env@latest run cli wp plugin activate woocommerce clyppers-role-based-pricing-for-woocommerce && npx -y @wordpress/env@latest run tests-cli wp plugin activate woocommerce clyppers-role-based-pricing-for-woocommerce"
+    }
+}

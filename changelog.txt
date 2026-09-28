@@ -1,8 +1,8 @@
 *** Clypper's Role Based Pricing for WooCommerce Changelog ***
 
-2026-XX-XX - version 1.0.0
+Unreleased - version 1.0.0
 * New - Initial public release
-* New - Role-based pricing rules for products, categories, general category groups, and a global fallback rule per WordPress user role
+* New - Role-based pricing rules per WordPress user role: individual products, single categories, a shared rule for a group of categories, and a global fallback rule
 * New - Built-in Guest role for setting pricing for logged-out (B2C) visitors
 * New - Quantity-break pricing: any rule can include a minimum quantity threshold with its own discount type and value, previewed on the product page before the customer reaches it
 * New - Percent discount, percent markup, fixed discount, fixed markup, and fixed set price rule types

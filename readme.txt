@@ -1,9 +1,9 @@
 === Clypper's Role Based Pricing for WooCommerce ===
-Contributors: Casper Holten
+Contributors: casperh123
 Tags: woocommerce, b2b, wholesale pricing, role based pricing, dynamic pricing
 Requires at least: 6.8
 Tested up to: 7.1
-Requires PHP: 8.3
+Requires PHP: 8.2
 WC requires at least: 9.6
 WC tested up to: 11.0.1
 Stable tag: 1.0.0
@@ -41,14 +41,28 @@ There's a built-in "Guest" role for pricing logged-out visitors.
 
 Works with WooCommerce HPOS. Prices update on the shop page, product pages, and cart.
 
+= Privacy =
+
+This plugin does not collect or store personal data, and makes no requests to external services. Pricing rules are stored in your own WordPress database. Its REST API endpoints are only available to users who can manage WooCommerce.
+
+= Source code =
+
+The admin interface is written in TypeScript and React and compiled with @wordpress/scripts. The uncompiled source is included in the plugin's `src/` folder and is also available on GitHub: https://github.com/casperh123/Clyppers-Role-Based-Pricing-for-Woocommerce
+
+To build it yourself, run `npm ci && npm run build`.
+
 == Installation ==
 
 1. Upload the plugin files to `/wp-content/plugins/clyppers-role-based-pricing-for-woocommerce`, or install through the WordPress plugins screen.
-2. Activate the plugin.
-3. Make sure WooCommerce is installed and active.
-4. Go to WooCommerce > Roles Rules to set up pricing.
+2. Make sure WooCommerce is installed and active.
+3. Activate the plugin.
+4. Go to WooCommerce > Role Rules to set up pricing.
 
 == Frequently Asked Questions ==
+
+= Where do I set up pricing? =
+
+Go to WooCommerce > Role Rules in your WordPress admin.
 
 = Can I set pricing for logged-out visitors? =
 
