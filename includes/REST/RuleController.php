@@ -75,10 +75,18 @@ class RuleController extends \WP_REST_Controller
     }
 
     public function update_rule(\WP_REST_Request $request ): \WP_REST_Response {
-        $request_json = $request->get_json_params();
-        $rule = RoleRules::from_array($request_json);
+        // Read the id from the URL only: $request['id'] prefers a body "id" over the URL for PUT/POST.
+        $existing = $this->rule_service->get_rule_by_id( (int) $request->get_url_params()['id'] );
 
-        $this->rule_service->update_rule($rule);
+        if ( ! $existing ) {
+            return new \WP_REST_Response(null, 404);
+        }
+
+        $rule = RoleRules::from_update( $existing, $request->get_json_params() ?? [] );
+
+        if ( ! $this->rule_service->update_rule( $rule ) ) {
+            return new \WP_REST_Response(null, 500);
+        }
 
         return new \WP_REST_Response(null, 204);
     }

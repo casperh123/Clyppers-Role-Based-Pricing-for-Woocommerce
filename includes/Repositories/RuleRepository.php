@@ -89,6 +89,10 @@ class RuleRepository
      * Save RoleRules back to database
      */
     public function update_rule(RoleRules $rule): bool {
+        if (get_post_type($rule->id) !== 'clypper_rbp') {
+            return false;
+        }
+
         $result = wp_update_post([
             'ID' => $rule->id,
             'post_title' => $rule->role_slug,
@@ -102,7 +106,13 @@ class RuleRepository
             'post_type' => 'clypper_rbp'
         ], true);
 
-        return !is_wp_error($result);
+        if (is_wp_error($result)) {
+            return false;
+        }
+
+        $this->rule_cache->add_rule($rule);
+
+        return true;
     }
 
     /**

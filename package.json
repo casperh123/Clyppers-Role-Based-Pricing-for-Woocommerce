@@ -7,6 +7,7 @@
         "build": "wp-scripts build",
         "start": "wp-scripts start",
         "type-check": "tsc --noEmit",
+        "test:integration": "npx -y @wordpress/env@latest run tests-cli --env-cwd=wp-content/plugins/clyppers-role-based-pricing-for-woocommerce/tests/Integration bash -c 'composer install --quiet --no-interaction && vendor/bin/phpunit'",
         "lint:js": "wp-scripts lint-js",
         "lint:css": "wp-scripts lint-style",
         "format": "wp-scripts format",

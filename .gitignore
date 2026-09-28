@@ -1,4 +1,5 @@
 /vendor/
+/tests/Integration/vendor/
 /node_modules/
 /build/
 /dist/
