@@ -43,7 +43,7 @@ composer install --no-dev --optimize-autoloader --no-interaction --quiet
 mkdir -p "$BUILD_DIR"
 
 echo "Copying plugin files..."
-cp "${PLUGIN_NAME}.php" readme.txt changelog.txt "$BUILD_DIR/"
+cp "${PLUGIN_NAME}.php" readme.txt changelog.txt composer.json "$BUILD_DIR/"
 cp -R includes assets build vendor "$BUILD_DIR/"
 
 # Human-readable source for the compiled JS (wp.org guideline 4)
