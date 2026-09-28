@@ -55,6 +55,16 @@ class RoleRules {
         );
     }
 
+    /**
+     * Build an updated rule from request data, keeping the identity (id and role) of the existing rule.
+     */
+    public static function from_update(RoleRules $existing, array $json): self {
+        $json['id'] = $existing->id;
+        $json['role_slug'] = $existing->role_slug;
+
+        return self::from_array($json);
+    }
+
     public function copy_from_rule(RoleRules $from): void
     {
       $this->products = $from->products;

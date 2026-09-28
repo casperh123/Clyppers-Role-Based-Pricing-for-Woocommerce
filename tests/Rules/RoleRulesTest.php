@@ -2,6 +2,7 @@
 
     namespace Rules;
 
+    use ClypperTechnology\RolePricing\Rules\RoleRules;
     use ClypperTechnology\RolePricing\Rules\Rule;
     use ClypperTechnology\RolePricing\Rules\RuleType;
     use Generators\Rules\ItemRuleGenerator;
@@ -136,6 +137,42 @@
             $this->assertEquals(100, $calculated_price);
         }
 
+        public function testFromUpdateKeepsIdAndRoleOfExistingRule() {
+
+            // Arrange
+            $existing = RoleRuleGenerator::empty();
+            $body = self::asRequestBody(RoleRuleGenerator::empty());
+            $body['id'] = $existing->id + 1;
+            $body['role_slug'] = 'administrator';
+
+            // Act
+            $updated = RoleRules::from_update($existing, $body);
+
+            // Assert
+            $this->assertSame($existing->id, $updated->id);
+            $this->assertSame($existing->role_slug, $updated->role_slug);
+        }
+
+        public function testFromUpdateAppliesRuleChangesFromRequest() {
+
+            // Arrange
+            $existing = RoleRuleGenerator::empty(active: false);
+            $body = self::asRequestBody(RoleRuleGenerator::withItemRules(
+                ItemRuleGenerator::RandomCollection(3),
+                [],
+                RuleGenerator::with(RuleType::TYPE_PERCENT, 15)
+            ));
+
+            // Act
+            $updated = RoleRules::from_update($existing, $body);
+
+            // Assert
+            $this->assertTrue($updated->rule_active);
+            $this->assertEquals(RuleType::TYPE_PERCENT, $updated->global_rule->type);
+            $this->assertEquals(15, $updated->global_rule->value);
+            $this->assertSame(3, $updated->get_rule_count());
+        }
+
         public function testCategoryRuleMatchesWhenOneOfSeveralCategoriesHasARule() {
             $category_rule = RuleGenerator::with(RuleType::TYPE_FIXED_SET, 50);
             $role_rules = RoleRuleGenerator::withItemRules([], [], RuleGenerator::Random(), $category_rule, [100]);
@@ -144,5 +181,12 @@
             $calculated_price = $applicable_rule->calculatePrice(10_000, 0);
 
             $this->assertEquals(50, $calculated_price);
+        }
+
+        /**
+         * The rule as the admin app sends it: JSON-encoded, then decoded by the REST API.
+         */
+        private static function asRequestBody(RoleRules $rule): array {
+            return json_decode(json_encode($rule->to_array()), true);
         }
     }
