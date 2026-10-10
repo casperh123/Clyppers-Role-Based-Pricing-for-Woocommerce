@@ -200,7 +200,7 @@ class PriceRules
             <div class="badge-container absolute right top z-1">
                 <div class="callout badge badge-circle">
                     <div class="badge-inner secondary on-sale" style="background-color: #e3ad30"><span
-                                class="onsale"><?php echo $message ?></span></div>
+                                class="onsale"><?php echo wp_kses_post( $message ); ?></span></div>
                 </div>
             </div>
             <?php
