@@ -1,0 +1,150 @@
+<?php
+
+namespace ClypperTechnology\RolePricing\Storefront;
+
+use ClypperTechnology\RolePricing\Services\RuleService;
+
+defined('ABSPATH') || exit;
+
+/**
+ * Puts the quantity discount on the storefront: a badge and price box on every product in a list, and the full
+ * message and price box on the product page.
+ *
+ * It uses WooCommerce's template hooks, which classic themes call directly and WooCommerce's block templates call
+ * through their compatibility layer, so one set of hooks covers both kinds of theme.
+ */
+final class StorefrontBanner
+{
+    private static bool $booted = false;
+
+    public function __construct(
+        private readonly BannerData $data,
+        private readonly BannerRenderer $renderer,
+    ) {}
+
+    /**
+     * Runs on `wp`, once the theme is known and before scripts are enqueued.
+     */
+    public static function boot(RuleService $rule_service): void
+    {
+        if (self::$booted || is_admin()) {
+            return;
+        }
+
+        self::$booted = true;
+
+        wp_register_style(BannerRenderer::STYLE_HANDLE, CRBP_PLUGIN_URL . 'assets/css/crbp.css', [], CRBP_VERSION);
+        add_action('wp_enqueue_scripts', [self::class, 'enqueue_on_shop_pages']);
+
+        (new self(new BannerData($rule_service), new BannerRenderer()))->register();
+    }
+
+    /**
+     * Where each piece goes, as [hook, priority]. Themes that move WooCommerce's hooks around can change these with
+     * the `crbp_banner_hooks` filter; set an entry to false to turn it off.
+     *
+     * @return array<string, array{0: string, 1: int}|false>
+     */
+    public static function hooks(): array
+    {
+        $hooks = [
+            // Product lists: badge after the image, price box after the price (both at priority 10).
+            'loop_badge'        => ['woocommerce_before_shop_loop_item_title', 11],
+            'loop_price_box'    => ['woocommerce_after_shop_loop_item_title', 11],
+            // Product page: message and price box right after the price (priority 10).
+            'product_message'   => ['woocommerce_single_product_summary', 11],
+            'product_price_box' => ['woocommerce_single_product_summary', 12],
+        ];
+
+        if (self::is_flatsome()) {
+            // Where Flatsome stores have always shown the badge and message.
+            $hooks['loop_badge'] = ['woocommerce_before_shop_loop_item', 999];
+            $hooks['product_message'] = ['flatsome_custom_single_product_1', 999];
+        }
+
+        return apply_filters('crbp_banner_hooks', $hooks);
+    }
+
+    public function register(): void
+    {
+        foreach (self::hooks() as $piece => $hook) {
+            if ($hook && method_exists($this, "print_{$piece}")) {
+                add_action($hook[0], [$this, "print_{$piece}"], $hook[1]);
+            }
+        }
+    }
+
+    public function print_loop_badge(): void
+    {
+        $view = $this->current_view();
+        $html = $view ? $this->renderer->badge($view, self::is_flatsome() ? 'onsale' : '') : '';
+
+        $this->output(self::is_flatsome() ? $this->in_flatsome_badge($html) : $html);
+    }
+
+    public function print_loop_price_box(): void
+    {
+        $view = $this->current_view();
+
+        $this->output($view ? $this->renderer->quantity_price_box($view, 'crbp-qty-price--loop') : '');
+    }
+
+    public function print_product_message(): void
+    {
+        $view = $this->current_view();
+
+        if (self::is_flatsome()) {
+            $this->output($view ? $this->in_flatsome_badge($this->renderer->message($view, 'span', 'onsale')) : '');
+        } else {
+            $this->output($view ? $this->renderer->message($view) : '');
+        }
+    }
+
+    public function print_product_price_box(): void
+    {
+        $view = $this->current_view();
+
+        $this->output($view ? $this->renderer->quantity_price_box($view) : '');
+    }
+
+    public static function enqueue_on_shop_pages(): void
+    {
+        if (is_woocommerce() || is_cart()) {
+            wp_enqueue_style(BannerRenderer::STYLE_HANDLE);
+        }
+    }
+
+    /**
+     * The product WooCommerce is currently rendering (in a loop, or the product page).
+     */
+    private function current_view(): ?BannerView
+    {
+        global $product;
+
+        return $product instanceof \WC_Product ? $this->data->for_product($product) : null;
+    }
+
+    private function output(string $html): void
+    {
+        echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- built and escaped in BannerRenderer
+    }
+
+    private static function is_flatsome(): bool
+    {
+        return 'flatsome' === get_template();
+    }
+
+    /**
+     * Flatsome's own badge markup, so the badge looks and sits the way Flatsome stores are used to.
+     */
+    private function in_flatsome_badge(string $html): string
+    {
+        if ($html === '') {
+            return '';
+        }
+
+        return '<div class="badge-container absolute right top z-1 crbp-flatsome">'
+            . '<div class="callout badge badge-circle"><div class="badge-inner secondary on-sale">' . $html . '</div></div>'
+            . '</div>';
+    }
+}

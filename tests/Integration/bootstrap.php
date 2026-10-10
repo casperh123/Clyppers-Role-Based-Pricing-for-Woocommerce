@@ -33,3 +33,4 @@ tests_add_filter( 'setup_theme', function () {
 require $crbp_tests_dir . '/includes/bootstrap.php';
 
 require __DIR__ . '/IntegrationTestCase.php';
+require __DIR__ . '/Storefront/StorefrontTestCase.php';

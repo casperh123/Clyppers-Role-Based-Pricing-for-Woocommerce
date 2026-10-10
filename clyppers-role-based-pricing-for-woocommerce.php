@@ -25,6 +25,7 @@ use ClypperTechnology\RolePricing\REST\RuleController;
 use ClypperTechnology\RolePricing\PriceRules;
 use ClypperTechnology\RolePricing\Services\RoleService;
 use ClypperTechnology\RolePricing\Services\RuleService;
+use ClypperTechnology\RolePricing\Storefront\StorefrontBanner;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -68,6 +69,10 @@ add_action( 'rest_api_init', function() use ( $crbp_rule_service, $crbp_role_ser
 
 add_action( 'woocommerce_loaded', function() use ( &$crbp_rule_service, &$crbp_role_service ) {
     new PriceRules( $crbp_rule_service );
+
+    add_action( 'wp', function() use ( $crbp_rule_service ) {
+        StorefrontBanner::boot( $crbp_rule_service );
+    } );
 
     if ( is_admin() ) {
         new Admin();
