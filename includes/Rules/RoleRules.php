@@ -28,31 +28,43 @@ class RoleRules {
      * Create RoleRules from WordPress post
      */
     public static function from_post(\WP_Post $post): self {
-        $content = json_decode(wp_unslash($post->post_content), true) ?: [];
+        $content = json_decode(wp_unslash($post->post_content), true);
+
+        if (!is_array($content)) {
+            $content = [];
+        }
+
+        $content['id'] = $post->ID;
+        $content['role_slug'] = $post->post_title;
+
+        return self::from_array($content);
+    }
+
+    /**
+     * Build RoleRules from stored or request data. Missing or malformed fields fall back to "no rule".
+     */
+    public static function from_array(array $json): self {
+        $is_array = fn(string $key) => is_array($json[$key] ?? null);
 
         return new self(
-            id: $post->ID,
-            role_slug: $post->post_title,
-            rule_active: ($content['rule_active'] ?? '') === 'on',
-            global_rule: isset($content['global_rule']) ? Rule::from_array($content['global_rule']) : null,
-            category_rule: isset($content['category_rule']) ? Rule::from_array($content['category_rule']) : null,
-            categories: array_Map(fn($id) => intval($id), $content['categories'] ?? []),
-            products: isset($content['products']) ? self::key_by_item_id($content['products']) : [],
-            single_categories: isset($content['single_categories']) ? self::key_by_item_id($content['single_categories']) : [],
+            id: is_numeric($json['id'] ?? null) ? (int)$json['id'] : 0,
+            role_slug: is_string($json['role_slug'] ?? null) ? $json['role_slug'] : '',
+            rule_active: in_array($json['rule_active'] ?? '', ['on', true], true),
+            global_rule: $is_array('global_rule') ? Rule::from_array($json['global_rule']) : null,
+            category_rule: $is_array('category_rule') ? Rule::from_array($json['category_rule']) : null,
+            categories: $is_array('categories') ? self::positive_ids($json['categories']) : [],
+            products: $is_array('products') ? self::key_by_item_id($json['products']) : [],
+            single_categories: $is_array('single_categories') ? self::key_by_item_id($json['single_categories']) : [],
         );
     }
 
-    public static function from_array(array $json): self {
-        return new self(
-            id: $json['id'],
-            role_slug: $json['role_slug'],
-            rule_active: ($json['rule_active']) == 'on',
-            global_rule: isset($json['global_rule']) ? Rule::from_array($json['global_rule']) : null,
-            category_rule: isset($json['category_rule']) ? Rule::from_array($json['category_rule']) : null,
-            categories: array_Map(fn($id) => intval($id), $json['categories']),
-            products: isset($json['products']) ? self::key_by_item_id($json['products']) : [],
-            single_categories: isset($json['single_categories']) ? self::key_by_item_id($json['single_categories']) : [],
-        );
+    /**
+     * @return int[]
+     */
+    private static function positive_ids(array $ids): array {
+        $ids = array_map(fn($id) => is_numeric($id) ? (int)$id : 0, $ids);
+
+        return array_values(array_unique(array_filter($ids, fn(int $id) => $id > 0)));
     }
 
     /**
