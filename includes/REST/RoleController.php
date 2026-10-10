@@ -38,12 +38,7 @@ class RoleController extends  \WP_REST_Controller
                 'permission_callback' => [ $this, 'permissions_check' ],
                 // The body also carries the rule "id"; it is ignored so a request can only toggle the rule of the role it names.
                 'args'                => [
-                    'slug'   => [
-                        'required'          => true,
-                        'type'              => 'string',
-                        'sanitize_callback' => 'sanitize_key',
-                        'validate_callback' => fn( $value ) => $this->roleService->role_exists( $value ),
-                    ],
+                    'slug'   => $this->role_slug_arg(),
                     'active' => [
                         'required' => true,
                         'type'     => 'boolean',
@@ -57,8 +52,22 @@ class RoleController extends  \WP_REST_Controller
                 'methods'             => \WP_REST_Server::CREATABLE,
                 'callback'            => [ $this, 'copy_rule' ],
                 'permission_callback' => [ $this, 'permissions_check' ],
+                'args'                => [
+                    'slug'           => $this->role_slug_arg(),
+                    'copy_rule_slug' => $this->role_slug_arg(),
+                ],
             ],
         ]);
+    }
+
+    private function role_slug_arg(): array
+    {
+        return [
+            'required'          => true,
+            'type'              => 'string',
+            'sanitize_callback' => 'sanitize_key',
+            'validate_callback' => fn( $value ) => $this->roleService->role_exists( $value ),
+        ];
     }
 
     public function permissions_check( $request ): \WP_Error|bool
@@ -95,13 +104,10 @@ class RoleController extends  \WP_REST_Controller
 
     public function copy_rule( \WP_REST_Request $request ): \WP_REST_Response
     {
-      $slug = $this->sanitize_slug($request->get_param("slug"));
-      $request_json = $request->get_json_params();
-      $copy_from_slug = $this->sanitize_slug($request_json['copy_rule_slug'] ?? null);
+      $slug = $request->get_param("slug");
+      $copy_from_slug = $request->get_param("copy_rule_slug");
 
-      if(!$copy_from_slug) {
-        return new \WP_REST_Response("No copy_from_slug found in request body", 400);
-      } elseif ($slug === $copy_from_slug) {
+      if ($slug === $copy_from_slug) {
           return new \WP_REST_Response("copy_rule_slug is the same as slug", 400);
       }
 

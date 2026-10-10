@@ -73,16 +73,16 @@ class RuleService {
 
     public function copy_roles_from_rule(string $slug, string $copy_from_slug): ?RoleRules
     {
-        $rule = $this->rule_repository->get_rule_by_role_slug($slug);
-
-        if(!$rule) {
-            $rule = $this->add_rule($slug);
-        }
-
         $copy_from_rule = $this->rule_repository->get_rule_by_role_slug($copy_from_slug);
 
         if(!$copy_from_rule) {
             return null;
+        }
+
+        $rule = $this->rule_repository->get_rule_by_role_slug($slug);
+
+        if(!$rule) {
+            $rule = $this->add_rule($slug);
         }
 
         $rule->copy_from_rule($copy_from_rule);
