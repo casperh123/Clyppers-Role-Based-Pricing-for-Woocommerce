@@ -36,6 +36,19 @@ class RoleController extends  \WP_REST_Controller
                 'methods'               => \WP_REST_Server::EDITABLE,
                 'callback'              => [ $this, 'update_items'],
                 'permission_callback' => [ $this, 'permissions_check' ],
+                // The body also carries the rule "id"; it is ignored so a request can only toggle the rule of the role it names.
+                'args'                => [
+                    'slug'   => [
+                        'required'          => true,
+                        'type'              => 'string',
+                        'sanitize_callback' => 'sanitize_key',
+                        'validate_callback' => fn( $value ) => $this->roleService->role_exists( $value ),
+                    ],
+                    'active' => [
+                        'required' => true,
+                        'type'     => 'boolean',
+                    ],
+                ],
             ],
         ]);
 
@@ -61,22 +74,20 @@ class RoleController extends  \WP_REST_Controller
     }
 
     public function update_items( WP_REST_Request $request ): \WP_REST_Response {
-        $request_rule = $request->get_json_params();
-        $rule = $this->ruleService->get_rule_by_id($request_rule["id"]);
+        $slug   = $request->get_param( 'slug' );
+        $active = $request->get_param( 'active' );
+
+        $rule = $this->ruleService->get_rule_by_role_slug( $slug );
 
         if($rule) {
-            $active = boolval($request["active"]);
-
             $rule->rule_active = $active;
             $this->ruleService->update_rule($rule);
 
             return new \WP_REST_Response($rule, 204);
         }
 
-        $role_slug = $request_rule["slug"];
-
-        $rule = $this->ruleService->add_rule($role_slug);
-        $rule->rule_active = true;
+        $rule = $this->ruleService->add_rule($slug);
+        $rule->rule_active = $active;
         $this->ruleService->update_rule($rule);
 
         return new \WP_REST_Response($rule, 200);
