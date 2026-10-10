@@ -62,7 +62,7 @@ add_action( 'rest_api_init', function() use ( $crbp_rule_service, $crbp_role_ser
     $namespace = 'crbp/v1';
 
     ( new ProductController( $namespace ) )->register_routes();
-    ( new RuleController( $namespace, $crbp_rule_service ) )->register_routes();
+    ( new RuleController( $namespace, $crbp_rule_service, $crbp_role_service ) )->register_routes();
     ( new RoleController( $namespace, $crbp_role_service, $crbp_rule_service ) )->register_routes();
 });
 

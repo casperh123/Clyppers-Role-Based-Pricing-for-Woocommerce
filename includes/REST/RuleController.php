@@ -4,21 +4,23 @@ namespace ClypperTechnology\RolePricing\REST;
 
 use ClypperTechnology\RolePricing\Factories\Factories\RoleRulesDTOFactory;
 use ClypperTechnology\RolePricing\Rules\RoleRules;
+use ClypperTechnology\RolePricing\Services\RoleService;
 use ClypperTechnology\RolePricing\Services\RuleService;
 use WP_REST_Response;
-use WpOrg\Requests\Exception\Http\Status429;
 
 defined('ABSPATH') || exit;
 
 class RuleController extends \WP_REST_Controller
 {
     private RuleService $rule_service;
+    private RoleService $role_service;
 
-    public function __construct( string $namespace, RuleService $ruleService )
+    public function __construct( string $namespace, RuleService $ruleService, RoleService $roleService )
     {
         $this->namespace     = $namespace;
         $this->resource_name = 'rules';
         $this->rule_service  = $ruleService;
+        $this->role_service  = $roleService;
     }
 
     public function register_routes(): void
@@ -28,22 +30,36 @@ class RuleController extends \WP_REST_Controller
                 'methods'             => \WP_REST_Server::CREATABLE,
                 'callback'            => [ $this, 'create_item' ],
                 'permission_callback' => [ $this, 'permissions_check' ],
+                'args'                => [
+                    'slug' => [
+                        'required'          => true,
+                        'type'              => 'string',
+                        'sanitize_callback' => 'sanitize_key',
+                        'validate_callback' => fn( $value ) => $this->role_service->role_exists( $value ),
+                    ],
+                ],
             ],
         ]);
+
+        $id_args = [
+            'id' => [
+                'type'    => 'integer',
+                'minimum' => 1,
+            ],
+        ];
 
         register_rest_route( $this->namespace, '/' . $this->resource_name . '/(?P<id>\d+)', [
             [
                 'methods'             => \WP_REST_Server::READABLE,
                 'callback'            => [ $this, 'get_item' ],
                 'permission_callback' => [ $this, 'permissions_check' ],
+                'args'                => $id_args,
             ],
-        ]);
-
-        register_rest_route( $this->namespace, '/' . $this->resource_name . '/(?P<id>\d+)', [
             [
                 'methods'             => \WP_REST_Server::EDITABLE,
                 'callback'            => [ $this, 'update_rule' ],
                 'permission_callback' => [ $this, 'permissions_check' ],
+                'args'                => $id_args,
             ],
         ]);
     }
@@ -69,9 +85,13 @@ class RuleController extends \WP_REST_Controller
     public function create_item( $request ): \WP_REST_Response {
         $slug = $request->get_param( "slug" );
 
-        $id = $this->rule_service->add_rule( $slug );
+        if ( $this->rule_service->get_rule_by_role_slug( $slug ) ) {
+            return new \WP_REST_Response( "A rule already exists for this role", 409 );
+        }
 
-        return new \WP_REST_Response($id, 200);
+        $rule = $this->rule_service->add_rule( $slug );
+
+        return new \WP_REST_Response($rule, 200);
     }
 
     public function update_rule(\WP_REST_Request $request ): \WP_REST_Response {
