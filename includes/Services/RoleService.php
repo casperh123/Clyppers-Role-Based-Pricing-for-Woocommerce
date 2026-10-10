@@ -45,6 +45,17 @@ class RoleService
     }
 
     /**
+     * Whether a slug names a WordPress role or the plugin's 'guest' pseudo-role
+     */
+    public function role_exists( mixed $slug ): bool {
+        if ( ! is_string( $slug ) || '' === $slug ) {
+            return false;
+        }
+
+        return 'guest' === $slug || array_key_exists( $slug, wp_roles()->get_names() );
+    }
+
+    /**
      * Get user role or 'guest' if user has no role or is not logged in
      *
      * @param WP_User|null $user Optional. User object. Defaults to current user.
