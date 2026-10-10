@@ -105,7 +105,9 @@ class RoleRules {
         foreach($items as $item_array) {
             $item = ItemRule::from_array($item_array);
 
-            $item_list[$item->id] = $item;
+            if ($item) {
+                $item_list[$item->id] = $item;
+            }
         }
 
         return $item_list;

@@ -95,13 +95,29 @@ class ItemRule implements PricingRule
         ];
     }
 
-    public static function from_array(array $data): self {
+    /**
+     * Build an item rule from stored or request data. Returns null when there is no usable product/category id.
+     */
+    public static function from_array(mixed $data): ?self {
+        if (!is_array($data)) {
+            return null;
+        }
+
+        $id = is_numeric($data['id'] ?? null) ? (int)$data['id'] : 0;
+
+        if ($id <= 0) {
+            return null;
+        }
+
+        $name = $data['name'] ?? '';
+        $min_qty = $data['min_qty'] ?? 0;
+
         return new self(
-            id: (int)$data['id'],
-            name: $data['name'],
-            rule: Rule::from_array( $data['rule'] ?? null),
+            id: $id,
+            name: is_scalar($name) ? sanitize_text_field((string)$name) : '',
+            rule: Rule::from_array($data['rule'] ?? null),
             quantity_rule: Rule::from_array($data['quantity_rule'] ?? null),
-            min_qty: (int)($data['min_qty'] ?? 0),
+            min_qty: is_numeric($min_qty) ? max(0, (int)$min_qty) : 0,
         );
     }
 }

@@ -6,6 +6,7 @@ use ClypperTechnology\RolePricing\Rules\ItemRule;
 use ClypperTechnology\RolePricing\Rules\Rule;
 use ClypperTechnology\RolePricing\Rules\RuleType;
 use Generators\Rules\ItemRuleGenerator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class ItemRuleTest extends TestCase
@@ -237,5 +238,51 @@ class ItemRuleTest extends TestCase
         $this->assertEquals(123, $rule->id);
         $this->assertEquals('Test rule', $rule->name);
         $this->assertEquals(10, $rule->min_quantity);
+    }
+
+    public static function unusableItems(): array
+    {
+        return [
+            'not an array'    => ['123'],
+            'missing id'      => [['name' => 'x']],
+            'id zero'         => [['id' => 0]],
+            'negative id'     => [['id' => -5]],
+            'id not a number' => [['id' => 'abc']],
+        ];
+    }
+
+    #[DataProvider('unusableItems')]
+    public function testItemWithoutAUsableIdIsDropped(mixed $data): void
+    {
+        $this->assertNull(ItemRule::from_array($data));
+    }
+
+    public function testMissingRulesAndQuantityBecomeEmpty(): void
+    {
+        $rule = ItemRule::from_array(['id' => '7']);
+
+        $this->assertSame(7, $rule->id);
+        $this->assertSame('', $rule->name);
+        $this->assertSame(RuleType::EMPTY, $rule->rule->type);
+        $this->assertSame(RuleType::EMPTY, $rule->quantity_rule->type);
+        $this->assertSame(0, $rule->min_quantity);
+        $this->assertFalse($rule->rule_applies(100));
+    }
+
+    public function testNameIsSanitized(): void
+    {
+        $rule = ItemRule::from_array(['id' => 1, 'name' => '<script>alert(1)</script>Hoodie']);
+
+        $this->assertStringNotContainsString('<', $rule->name);
+    }
+
+    public function testNonScalarNameBecomesEmpty(): void
+    {
+        $this->assertSame('', ItemRule::from_array(['id' => 1, 'name' => ['x']])->name);
+    }
+
+    public function testNegativeMinimumQuantityBecomesZero(): void
+    {
+        $this->assertSame(0, ItemRule::from_array(['id' => 1, 'min_qty' => -3])->min_quantity);
     }
 }
