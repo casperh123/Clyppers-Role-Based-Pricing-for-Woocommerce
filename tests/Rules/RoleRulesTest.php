@@ -8,6 +8,7 @@
     use Generators\Rules\ItemRuleGenerator;
     use Generators\Rules\RoleRuleGenerator;
     use Generators\Rules\RuleGenerator;
+    use PHPUnit\Framework\Attributes\DataProvider;
     use PHPUnit\Framework\TestCase;
 
     class RoleRulesTest extends TestCase
@@ -181,6 +182,73 @@
             $calculated_price = $applicable_rule->calculatePrice(10_000, 0);
 
             $this->assertEquals(50, $calculated_price);
+        }
+
+        public function testFromArrayWithNothingIsAnInactiveRuleWithoutPricing() {
+            $rule = RoleRules::from_array([]);
+
+            $this->assertSame(0, $rule->id);
+            $this->assertSame('', $rule->role_slug);
+            $this->assertFalse($rule->rule_active);
+            $this->assertNull($rule->global_rule);
+            $this->assertNull($rule->category_rule);
+            $this->assertSame([], $rule->categories);
+            $this->assertSame(0, $rule->get_rule_count());
+            $this->assertNull($rule->get_applicable_rule(1, [1], 1));
+        }
+
+        public static function malformedFields(): array {
+            return [
+                'global_rule not an array'       => [['global_rule' => 'percent']],
+                'category_rule not an array'     => [['category_rule' => 5]],
+                'categories not an array'        => [['categories' => '1,2,3']],
+                'products not an array'          => [['products' => 'all']],
+                'single_categories not an array' => [['single_categories' => true]],
+                'items that are not arrays'      => [['products' => ['x', 1, null]]],
+                'unknown rule type'              => [['global_rule' => ['type' => 'free', 'value' => 100]]],
+            ];
+        }
+
+        #[DataProvider('malformedFields')]
+        public function testMalformedFieldsNeverProduceAPrice(array $fields) {
+            $rule = RoleRules::from_update(RoleRuleGenerator::empty(), $fields + ['rule_active' => 'on']);
+
+            $this->assertSame(0, $rule->get_rule_count());
+            $this->assertNull($rule->get_applicable_rule(1, [1], 1));
+        }
+
+        public function testCategoriesKeepOnlyPositiveUniqueIds() {
+            $rule = RoleRules::from_array(['categories' => [3, '3', '7', 0, -2, 'abc', [1], 12.0]]);
+
+            $this->assertSame([3, 7, 12], $rule->categories);
+        }
+
+        public static function activeValues(): array {
+            return [
+                "'on'"  => ['on', true],
+                'true'  => [true, true],
+                "''"    => ['', false],
+                'false' => [false, false],
+                "'1'"   => ['1', false],
+                'array' => [['on'], false],
+            ];
+        }
+
+        #[DataProvider('activeValues')]
+        public function testRuleActiveAcceptsOnlyOnOrTrue(mixed $value, bool $expected) {
+            $this->assertSame($expected, RoleRules::from_array(['rule_active' => $value])->rule_active);
+        }
+
+        public function testStoredRuleRoundTrips() {
+            $rule = RoleRuleGenerator::withItemRules(
+                ItemRuleGenerator::RandomCollection(3),
+                ItemRuleGenerator::RandomCollection(2),
+                RuleGenerator::with(RuleType::TYPE_PERCENT, 10),
+                RuleGenerator::with(RuleType::TYPE_FIXED, 5),
+                [4, 8],
+            );
+
+            $this->assertEquals($rule, RoleRules::from_array(self::asRequestBody($rule)));
         }
 
         /**
