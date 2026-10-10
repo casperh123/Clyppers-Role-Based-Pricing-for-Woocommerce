@@ -1,4 +1,5 @@
 import { RoleService } from "@/services/roleService";
+import { __, sprintf } from "@wordpress/i18n";
 import { Role } from "@/types/role";
 import { Button, Modal } from "@wordpress/components";
 import { SelectControl, Spinner } from "@wordpress/ui";
@@ -45,10 +46,10 @@ export const CopyRule = ({
 
   return (
     <div className="row">
-      <Button onClick={() => setOpenModal(true)} variant="primary" disabled={chosenSlug == null}>Copy rules to</Button>
+      <Button onClick={() => setOpenModal(true)} variant="primary" disabled={chosenSlug == null}>{__('Copy rules to', 'clyppers-role-based-pricing-for-woocommerce')}</Button>
 
       <SelectControl
-        label="Copy rules to"
+        label={__('Copy rules to', 'clyppers-role-based-pricing-for-woocommerce')}
         items={options}
         value={chosenItem}
         hideLabelFromVision={true}
@@ -63,12 +64,21 @@ export const CopyRule = ({
             <Spinner />
           ) : (
             <div>
-              <h3>Copy rules to {chosenRole?.name}</h3>
-              <p>This will erase all rules from {chosenRole?.name}, and the rules of {thisRole?.name} will be added to it.</p>
+              <h3>{sprintf(
+                /* translators: %s: name of the role the rules are copied to */
+                __('Copy rules to %s', 'clyppers-role-based-pricing-for-woocommerce'),
+                chosenRole?.name ?? ''
+              )}</h3>
+              <p>{sprintf(
+                /* translators: 1: role whose rules are replaced, 2: role whose rules are copied */
+                __('This will erase all rules from %1$s, and the rules of %2$s will be added to it.', 'clyppers-role-based-pricing-for-woocommerce'),
+                chosenRole?.name ?? '',
+                thisRole?.name ?? ''
+              )}</p>
 
               <div className="row">
-                <Button onClick={() => copyFromSlug()} variant="primary">Confirm</Button>
-                <Button onClick={() => setOpenModal(false)} variant="secondary">Cancel</Button>
+                <Button onClick={() => copyFromSlug()} variant="primary">{__('Confirm', 'clyppers-role-based-pricing-for-woocommerce')}</Button>
+                <Button onClick={() => setOpenModal(false)} variant="secondary">{__('Cancel', 'clyppers-role-based-pricing-for-woocommerce')}</Button>
               </div>
             </div>
           )}

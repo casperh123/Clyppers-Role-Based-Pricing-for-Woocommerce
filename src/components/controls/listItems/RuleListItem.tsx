@@ -1,4 +1,5 @@
 import { RoleRules } from "@/types/roleRules";
+import { __ } from "@wordpress/i18n";
 import { RuleKey } from "@/types/RuleKey";
 import { ruleTypeFormValues } from "@/types/ruleType";
 import { Button, SelectControl } from "@wordpress/components";
@@ -108,7 +109,7 @@ export const RuleListItem = ({
       <td>
         <Button
           icon={trash}
-          label="Delete"
+          label={__('Delete', 'clyppers-role-based-pricing-for-woocommerce')}
           isDestructive
           onClick={onRemove}
         />

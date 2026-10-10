@@ -1,4 +1,5 @@
 import { RuleService } from "@/services/ruleService";
+import { __ } from "@wordpress/i18n";
 import { RoleRules } from "@/types/roleRules";
 import { useEffect, useState, useTransition } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -59,30 +60,30 @@ export function Rules() {
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <div className="row" style={{marginBottom: 40}}>
-            <Icon icon={arrowLeft} onClick={(() => navigate(-1))} style={{ cursor: "pointer" }}/>
+            <Button icon={arrowLeft} onClick={() => navigate(-1)} label={__('Back to roles', 'clyppers-role-based-pricing-for-woocommerce')}/>
             <h1>{rule?.role_name}</h1>
           </div>
           <div className="roles-list">
             <div className="row" style={{ justifyContent: "space-between", alignItems: "center"}}>
               <Button type="submit" variant={isDirty ? "primary" : "secondary"}  disabled={isSaving || !isDirty}>
-                {isSaving ? "Saving…" : "Save"}
+                {isSaving ? __('Saving…', 'clyppers-role-based-pricing-for-woocommerce') : __('Save', 'clyppers-role-based-pricing-for-woocommerce')}
               </Button>
               <CopyRule roleSlug={rule.role_slug}/>
             </div>
             <RulesPanel 
-              title="Product Rules"
+              title={__('Product rules', 'clyppers-role-based-pricing-for-woocommerce')}
               createRule={(product) => createRuleFromProduct(product)}
               onSearch={searchProducts}
               ruleKey="products"
               startOpen={true}
-              modalTitle="Add new product"
+              modalTitle={__('Add product', 'clyppers-role-based-pricing-for-woocommerce')}
               />
             <RulesPanel
-              title="Category Rules"
+              title={__('Category rules', 'clyppers-role-based-pricing-for-woocommerce')}
               createRule={(category) => createRuleFromCategory(category)}
               onSearch={searchCategories}
               ruleKey="single_categories" 
-              modalTitle="Add new category"
+              modalTitle={__('Add category', 'clyppers-role-based-pricing-for-woocommerce')}
               />
           </div>
         </form>

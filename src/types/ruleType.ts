@@ -1,3 +1,5 @@
+import { __ } from "@wordpress/i18n";
+
 export type RuleType =
   | "percent"
   | "percent_add"
@@ -10,9 +12,9 @@ export const ruleTypeFormValues: {
   label: string;
   value: RuleType;
 }[] = [
-  { label: "Reduce by percent (%)", value: "percent" },
-  { label: "Increase by percent (%)", value: "percent_add" },
-  { label: "Reduce by fixed value", value: "fixed" },
-  { label: "Increase by fixed value", value: "fixed_add" },
-  { label: "Fixed price", value: "fixed_set" },
+  { label: __('Reduce by percent (%)', 'clyppers-role-based-pricing-for-woocommerce'), value: "percent" },
+  { label: __('Increase by percent (%)', 'clyppers-role-based-pricing-for-woocommerce'), value: "percent_add" },
+  { label: __('Reduce by fixed value', 'clyppers-role-based-pricing-for-woocommerce'), value: "fixed" },
+  { label: __('Increase by fixed value', 'clyppers-role-based-pricing-for-woocommerce'), value: "fixed_add" },
+  { label: __('Fixed price', 'clyppers-role-based-pricing-for-woocommerce'), value: "fixed_set" },
 ];

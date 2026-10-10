@@ -1,4 +1,5 @@
 import { Badge, CollapsibleCard } from "@wordpress/ui"
+import { __ } from "@wordpress/i18n";
 import { Button, Modal } from "@wordpress/components";
 import { useState } from "react";
 import { RuleList } from "../controls/RuleList";
@@ -53,7 +54,7 @@ export const RulesPanel = <T extends RuleItem>({
             {`${fields.length}`}
           </Badge>
           </div>
-          <Button isDestructive={addRule} onClick={() => setAddRule(!addRule)}><Icon icon={ plus }/></Button>
+          <Button isDestructive={addRule} onClick={() => setAddRule(!addRule)} label={modalTitle}><Icon icon={ plus }/></Button>
         </div>
       </CollapsibleCard.Header>
 
@@ -66,7 +67,7 @@ export const RulesPanel = <T extends RuleItem>({
          )}
           
          { fields.length == 0 ? (
-          <p>There are no rules yet!</p>
+          <p>{__('There are no rules yet!', 'clyppers-role-based-pricing-for-woocommerce')}</p>
          ) : (
           <RuleList fields={fields} onRemove={remove} ruleKey={ruleKey}/>
          )}

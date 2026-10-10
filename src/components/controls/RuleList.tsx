@@ -1,4 +1,5 @@
 import { RuleListItem } from "./listItems/RuleListItem";
+import { __ } from "@wordpress/i18n";
 import type { FieldArrayWithId } from "react-hook-form";
 import type { RoleRules } from "@/types/roleRules";
 import { RuleKey } from "@/types/RuleKey";
@@ -19,16 +20,16 @@ export const RuleList = ({
       <thead>
         <tr>
           <th style={{width: 70}}></th>
-          <th>Name</th>
+          <th>{__('Name', 'clyppers-role-based-pricing-for-woocommerce')}</th>
 
           { ruleKey == "products" && (
-            <th style={{width: 150}}>Price</th>
+            <th style={{width: 150}}>{__('Price', 'clyppers-role-based-pricing-for-woocommerce')}</th>
           )}
-          <th>Rule type</th>
-          <th style={{width: 130}}>Value</th>
-          <th style={{width: 130}} className="quantity-column">Min quantity</th>
-          <th className="quantity-column">Reduction type</th>
-          <th style={{width: 130}} className="quantity-column">Value</th>
+          <th>{__('Rule type', 'clyppers-role-based-pricing-for-woocommerce')}</th>
+          <th style={{width: 130}}>{__('Value', 'clyppers-role-based-pricing-for-woocommerce')}</th>
+          <th style={{width: 130}} className="quantity-column">{__('Min quantity', 'clyppers-role-based-pricing-for-woocommerce')}</th>
+          <th className="quantity-column">{__('Quantity rule type', 'clyppers-role-based-pricing-for-woocommerce')}</th>
+          <th style={{width: 130}} className="quantity-column">{__('Quantity rule value', 'clyppers-role-based-pricing-for-woocommerce')}</th>
           <th style={{width: 50}}></th>
         </tr>
       </thead>

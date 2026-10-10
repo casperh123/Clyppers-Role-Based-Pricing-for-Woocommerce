@@ -1,4 +1,5 @@
 import { Button, ComboboxControl } from "@wordpress/components"
+import { __ } from "@wordpress/i18n";
 import { useDebounce } from "@wordpress/compose";
 import { useState, useTransition } from "react"
 
@@ -94,7 +95,7 @@ export const ItemSearch = <T extends SearchItem>({
                 onItemAdded(item);
               }}
             >
-              {alreadyAdded ? "Added" : "Add"}
+              {alreadyAdded ? __('Added', 'clyppers-role-based-pricing-for-woocommerce') : __('Add', 'clyppers-role-based-pricing-for-woocommerce')}
             </Button>
           </div>
         );
