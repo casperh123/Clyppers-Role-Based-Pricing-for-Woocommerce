@@ -4,6 +4,7 @@ namespace ClypperTechnology\RolePricing\Factories\Factories;
 
 use ClypperTechnology\RolePricing\REST\DTOs\RoleRulesDTO;
 use ClypperTechnology\RolePricing\Rules\RoleRules;
+use ClypperTechnology\RolePricing\Services\RoleService;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -18,7 +19,7 @@ final class RoleRulesDTOFactory
     }
 
     private static function slug_to_name(string $slug ): string {
-        $name = str_replace("_", " ", $slug);
-        return ucfirst($name);
+        // Fall back to the slug for a rule whose role has since been removed.
+        return RoleService::role_names()[$slug] ?? ucfirst(str_replace("_", " ", $slug));
     }
 }

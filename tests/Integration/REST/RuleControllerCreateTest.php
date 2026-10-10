@@ -73,6 +73,33 @@ final class RuleControllerCreateTest extends IntegrationTestCase
         $this->assertSame( 'customer', $response->get_data()['role_slug'] );
     }
 
+    public function testRuleShowsTheRolesDisplayName(): void
+    {
+        $guest    = $this->ruleFor( 'guest' );
+        $manager  = $this->ruleFor( 'shop_manager' );
+
+        $this->assertSame( 'Guest', $this->request( 'GET', "/crbp/v1/rules/{$guest->id}" )->get_data()['role_name'] );
+        $this->assertSame( 'Shop manager', $this->request( 'GET', "/crbp/v1/rules/{$manager->id}" )->get_data()['role_name'] );
+    }
+
+    public function testRuleShowsACustomRolesOwnName(): void
+    {
+        add_role( 'b2b_buyer', 'Wholesale Partner' );
+        $rule = $this->ruleFor( 'b2b_buyer' );
+
+        $name = $this->request( 'GET', "/crbp/v1/rules/{$rule->id}" )->get_data()['role_name'];
+
+        remove_role( 'b2b_buyer' );
+        $this->assertSame( 'Wholesale Partner', $name );
+    }
+
+    public function testRuleForARemovedRoleFallsBackToItsSlug(): void
+    {
+        $rule = $this->ruleFor( 'old_role' );
+
+        $this->assertSame( 'Old role', $this->request( 'GET', "/crbp/v1/rules/{$rule->id}" )->get_data()['role_name'] );
+    }
+
     public function testGettingANonRulePostReturns404(): void
     {
         $page = self::factory()->post->create( [ 'post_type' => 'page' ] );

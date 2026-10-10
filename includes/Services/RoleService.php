@@ -18,11 +18,9 @@ class RoleService
      */
     public function get_all_roles(array $rules): array {
         //TODO Could be nice to have a user count in the RoleDTO????
-        $wp_roles = array_map('translate_user_role', wp_roles()->get_names());
-        $wp_roles['guest'] = __('Guest', 'clyppers-role-based-pricing-for-woocommerce');
         $roles = [];
 
-        foreach($wp_roles as $role_slug => $role_name) {
+        foreach(self::role_names() as $role_slug => $role_name) {
             $rule = array_find($rules, fn($rule) => $rule->role_slug == $role_slug);
 
             if($rule) {
@@ -41,6 +39,18 @@ class RoleService
         });
 
         return $roles;
+    }
+
+    /**
+     * Display names of every role plus 'guest', in the site language
+     *
+     * @return array<string, string> slug => name
+     */
+    public static function role_names(): array {
+        $names = array_map('translate_user_role', wp_roles()->get_names());
+        $names['guest'] = __('Guest', 'clyppers-role-based-pricing-for-woocommerce');
+
+        return $names;
     }
 
     /**
