@@ -1,9 +1,9 @@
 import { RuleService } from "@/services/ruleService";
 import { __ } from "@wordpress/i18n";
 import { RoleRules } from "@/types/roleRules";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Button, Icon, Spinner } from '@wordpress/components';
+import { Button, Notice, Spinner } from '@wordpress/components';
 import { arrowLeft } from "@wordpress/icons";
 import { FormProvider, useForm } from "react-hook-form";
 import { RulesPanel } from "../editingSections/RulesPanel";
@@ -14,37 +14,47 @@ import { CopyRule } from "../editingSections/CopyRule";
 
 export function Rules() {
   const { id } = useParams<{ id: string }>();
-  const  numericId = id ? parseInt(id) : 0;
+  const numericId = id ? Number.parseInt(id, 10) : 0;
   const [rule, setRule] = useState<RoleRules>();
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setTransition] = useTransition();
+  const [error, setError] = useState<string>();
   const navigate = useNavigate();
 
   const methods = useForm<RoleRules>();
-  const { isDirty } = methods.formState;
+  // isSubmitting stays true until onSubmit's promise settles.
+  const { isDirty, isSubmitting } = methods.formState;
 
   useEffect(() => {
     const load = async () => {
-      const rule: RoleRules = await RuleService.getRule(numericId);
-
-      setRule(rule);
-      methods.reset(rule);
-
-      setIsLoading(false);
-    }
-
-    load();
-  }, [numericId])
-  
-  const onSubmit = async (rule: RoleRules) => {
-      setTransition(() => { 
-        RuleService.updateRules(rule); 
+      try {
+        const rule = await RuleService.getRule(numericId);
+        setRule(rule);
         methods.reset(rule);
-      });
-  }
+      } catch {
+        setError(__('These pricing rules could not be loaded. Go back and try again.', 'clyppers-role-based-pricing-for-woocommerce'));
+      }
+    };
 
-  if (isLoading || !rule) {
-    return <Spinner />
+    void load();
+  }, [numericId]);
+
+  const onSubmit = async (rule: RoleRules) => {
+    setError(undefined);
+
+    try {
+      await RuleService.updateRules(rule);
+      // Only now is the form "saved"; on failure it stays dirty so the edits can be saved again.
+      methods.reset(rule);
+    } catch {
+      setError(__('Your changes could not be saved. They are still here, so you can try again.', 'clyppers-role-based-pricing-for-woocommerce'));
+    }
+  };
+
+  const errorNotice = error && (
+    <Notice status="error" onRemove={() => setError(undefined)}>{error}</Notice>
+  );
+
+  if (!rule) {
+    return errorNotice || <Spinner />;
   }
 
   const searchProducts = async (search: string) => {
@@ -58,15 +68,16 @@ export function Rules() {
   return(
     <div>
       <FormProvider {...methods}>
-        <form onSubmit={methods.handleSubmit(onSubmit)}>
+        <form onSubmit={(event) => void methods.handleSubmit(onSubmit)(event)}>
           <div className="row" style={{marginBottom: 40}}>
             <Button icon={arrowLeft} onClick={() => navigate(-1)} label={__('Back to roles', 'clyppers-role-based-pricing-for-woocommerce')}/>
             <h1>{rule?.role_name}</h1>
           </div>
           <div className="roles-list">
+            {errorNotice}
             <div className="row" style={{ justifyContent: "space-between", alignItems: "center"}}>
-              <Button type="submit" variant={isDirty ? "primary" : "secondary"}  disabled={isSaving || !isDirty}>
-                {isSaving ? __('Saving…', 'clyppers-role-based-pricing-for-woocommerce') : __('Save', 'clyppers-role-based-pricing-for-woocommerce')}
+              <Button type="submit" variant={isDirty ? "primary" : "secondary"} disabled={isSubmitting || !isDirty} isBusy={isSubmitting}>
+                {isSubmitting ? __('Saving…', 'clyppers-role-based-pricing-for-woocommerce') : __('Save', 'clyppers-role-based-pricing-for-woocommerce')}
               </Button>
               <CopyRule roleSlug={rule.role_slug}/>
             </div>
