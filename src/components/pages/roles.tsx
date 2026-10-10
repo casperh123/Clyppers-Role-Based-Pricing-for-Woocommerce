@@ -1,4 +1,5 @@
 import { RoleService } from "@/services/roleService";
+import { __ } from "@wordpress/i18n";
 import { Role } from "@/types/role";
 import { useEffect, useState, useTransition } from "react";
 import { Spinner } from '@wordpress/components';
@@ -25,7 +26,7 @@ export function Roles() {
   return (
     <div>
       <div>
-        <h1>Roles</h1>
+        <h1>{__('Roles', 'clyppers-role-based-pricing-for-woocommerce')}</h1>
       </div>
       <div className="roles-list">
         { isPending ? (

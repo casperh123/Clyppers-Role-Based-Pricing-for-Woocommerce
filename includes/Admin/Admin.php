@@ -27,6 +27,8 @@ class Admin {
             [ 'in_footer' => true ]
         );
 
+        wp_set_script_translations( 'clypper-rbp-admin', 'clyppers-role-based-pricing-for-woocommerce' );
+
         wp_enqueue_style(
                 'clypper-rbp-admin',
                 CRBP_PLUGIN_URL . 'build/index.css',
