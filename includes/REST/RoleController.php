@@ -102,13 +102,17 @@ class RoleController extends  \WP_REST_Controller
         return new \WP_REST_Response($rule, 200);
     }
 
-    public function copy_rule( \WP_REST_Request $request ): \WP_REST_Response
+    public function copy_rule( \WP_REST_Request $request ): \WP_REST_Response|\WP_Error
     {
       $slug = $request->get_param("slug");
       $copy_from_slug = $request->get_param("copy_rule_slug");
 
       if ($slug === $copy_from_slug) {
-          return new \WP_REST_Response("copy_rule_slug is the same as slug", 400);
+          return new \WP_Error(
+              'crbp_copy_to_self',
+              __( 'A role cannot copy rules from itself.', 'clyppers-role-based-pricing-for-woocommerce' ),
+              [ 'status' => 400 ]
+          );
       }
 
       $rule = $this->ruleService->copy_roles_from_rule( $slug, $copy_from_slug );

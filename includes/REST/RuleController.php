@@ -82,11 +82,15 @@ class RuleController extends \WP_REST_Controller
         return new \WP_REST_Response($rule_DTO->to_array(), 200);
     }
 
-    public function create_item( $request ): \WP_REST_Response {
+    public function create_item( $request ): \WP_REST_Response|\WP_Error {
         $slug = $request->get_param( "slug" );
 
         if ( $this->rule_service->get_rule_by_role_slug( $slug ) ) {
-            return new \WP_REST_Response( "A rule already exists for this role", 409 );
+            return new \WP_Error(
+                'crbp_rule_exists',
+                __( 'This role already has a pricing rule.', 'clyppers-role-based-pricing-for-woocommerce' ),
+                [ 'status' => 409 ]
+            );
         }
 
         $rule = $this->rule_service->add_rule( $slug );
