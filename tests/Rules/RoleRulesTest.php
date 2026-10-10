@@ -59,6 +59,7 @@
             $category_ids = [ 100 ];
             $products = ItemRuleGenerator::RandomCollection($products);
             $single_categories = ItemRuleGenerator::RandomCollection($categories);
+            unset($single_categories[100]); // a single-category rule for 100 would rightly win over the category rule
             $category_rule = RuleGenerator::with(RuleType::TYPE_FIXED_SET, 100);
             $global_rule = RuleGenerator::Random();
             $role_rule = RoleRuleGenerator::withItemRules($products, $single_categories, $global_rule, $category_rule, $category_ids);

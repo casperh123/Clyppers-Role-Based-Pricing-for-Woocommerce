@@ -32,7 +32,8 @@ class ItemRuleGenerator
      */
     public static function RandomCollection(int $size): array {
         $rules = [];
-        for ($i = 0; $i < $size; $i++) {
+        // Keyed by id, so loop until there are $size distinct ids rather than letting duplicates collapse.
+        while (count($rules) < $size) {
             $rule = self::Random();
             $rules[$rule->id] = $rule;
         }
