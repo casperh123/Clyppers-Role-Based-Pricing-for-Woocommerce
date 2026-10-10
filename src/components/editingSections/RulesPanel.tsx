@@ -54,7 +54,15 @@ export const RulesPanel = <T extends RuleItem>({
             {`${fields.length}`}
           </Badge>
           </div>
-          <Button isDestructive={addRule} onClick={() => setAddRule(!addRule)} label={modalTitle}><Icon icon={ plus }/></Button>
+          {/* The header toggles the panel, so keep clicks and key presses on this button from reaching it. */}
+          <Button
+            isDestructive={addRule}
+            onClick={(e: React.MouseEvent) => { e.stopPropagation(); setAddRule(!addRule); }}
+            onKeyDown={(e: React.KeyboardEvent) => e.stopPropagation()}
+            label={modalTitle}
+          >
+            <Icon icon={ plus }/>
+          </Button>
         </div>
       </CollapsibleCard.Header>
 
