@@ -2,8 +2,10 @@
 
 namespace Tests\Integration;
 
+use ClypperTechnology\RolePricing\Cache\RuleCache;
 use ClypperTechnology\RolePricing\Repositories\RuleRepository;
 use ClypperTechnology\RolePricing\Rules\RoleRules;
+use ClypperTechnology\RolePricing\Services\RuleService;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
@@ -24,6 +26,32 @@ abstract class IntegrationTestCase extends WP_UnitTestCase
         global $wp_rest_server;
         $wp_rest_server = new WP_REST_Server();
         do_action( 'rest_api_init', $wp_rest_server );
+
+        $this->resetPluginRuleCache();
+    }
+
+    /**
+     * The plugin's RuleService lives for the whole PHPUnit process, but its in-memory RuleCache is meant to
+     * live for one request. Empty it so rules from earlier (rolled back) tests don't leak into this one.
+     */
+    private function resetPluginRuleCache(): void
+    {
+        global $wp_filter;
+
+        foreach ( $wp_filter['rest_api_init']->callbacks as $callbacks ) {
+            foreach ( $callbacks as $callback ) {
+                if ( ! $callback['function'] instanceof \Closure ) {
+                    continue;
+                }
+
+                $rule_service = ( new \ReflectionFunction( $callback['function'] ) )->getStaticVariables()['crbp_rule_service'] ?? null;
+
+                if ( $rule_service instanceof RuleService ) {
+                    $repository = ( new \ReflectionProperty( RuleService::class, 'rule_repository' ) )->getValue( $rule_service );
+                    ( new \ReflectionProperty( RuleRepository::class, 'rule_cache' ) )->setValue( $repository, new RuleCache() );
+                }
+            }
+        }
     }
 
     public function tear_down(): void
