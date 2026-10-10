@@ -179,7 +179,8 @@ final class StorefrontBanner
 
         if ($this->theme_sale_badge === null) {
             remove_filter('woocommerce_sale_flash', [$this, 'append_to_sale_flash'], 999);
-            $html = apply_filters('woocommerce_sale_flash', '<span class="onsale">' . esc_html__('Sale!', 'woocommerce') . '</span>', get_post($product->get_id()), $product);
+            // Only the theme's tag and classes are read, so the badge text doesn't matter.
+            $html = apply_filters('woocommerce_sale_flash', '<span class="onsale"></span>', get_post($product->get_id()), $product); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WooCommerce's own filter, asked for the theme's sale badge markup
             add_filter('woocommerce_sale_flash', [$this, 'append_to_sale_flash'], 999, 3);
 
             $this->theme_sale_badge = self::badge_markup_of((string)$html) ?? ['span', 'onsale'];
