@@ -1,9 +1,72 @@
-/* The ones i use */
-
-.role-based-sales-badge {
-	background-color: #fff75e;
+/*
+ * Clypper's Role Based Pricing for WooCommerce: storefront discount banner.
+ *
+ * Override the colours from your theme:
+ *   :root { --crbp-accent: #c00; --crbp-accent-text: #fff; }
+ */
+:root {
+	--crbp-accent: #e3ad30;
+	--crbp-accent-text: #fff;
+	--crbp-box-background: rgba(0, 0, 0, 0.05);
 }
 
-.qty-reduction-price {
-	margin-top: 10px;
+.crbp-badge {
+	display: inline-block;
+	background-color: var(--crbp-accent);
+	color: var(--crbp-accent-text);
+	font-size: 0.875em;
+	font-weight: 600;
+	line-height: 1.4;
+	border-radius: 0.25em;
+}
+
+.crbp-badge--short {
+	margin: 0.5em 0;
+	padding: 0.2em 0.6em;
+}
+
+.crbp-badge--full {
+	margin: 0 0 1em;
+	padding: 0.4em 0.8em;
+}
+
+.crbp-qty-price {
+	margin: 1em 0;
+	padding: 1em;
+	background-color: var(--crbp-box-background);
+	border-radius: 0.25em;
+}
+
+.crbp-qty-price__label {
+	margin: 0 0 0.25em;
+	font-size: 0.875em;
+}
+
+.crbp-qty-price__amount {
+	margin: 0;
+}
+
+/* Compact version under each product in shop and category lists. */
+.crbp-qty-price--loop {
+	margin: 0.5em 0;
+	padding: 0.5em 0.75em;
+	font-size: 0.875em;
+}
+
+.crbp-qty-price--loop .crbp-qty-price__label {
+	font-size: 1em;
+}
+
+/* Flatsome keeps its own badge shape; only the colour comes from here. */
+.crbp-flatsome .badge-inner {
+	background-color: var(--crbp-accent);
+}
+
+.crbp-flatsome .crbp-badge {
+	display: inline;
+	margin: 0;
+	padding: 0;
+	background: none;
+	font-size: inherit;
+	border-radius: 0;
 }

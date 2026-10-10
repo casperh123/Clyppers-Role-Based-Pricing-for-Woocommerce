@@ -7,10 +7,10 @@
 
 namespace ClypperTechnology\RolePricing;
 
-use ClypperTechnology\RolePricing\Rules\ItemRule;
 use ClypperTechnology\RolePricing\Rules\PricingRule;
 use ClypperTechnology\RolePricing\Rules\RoleRules;
-use ClypperTechnology\RolePricing\Services\RuleService;use WC_Product;
+use ClypperTechnology\RolePricing\Services\RuleService;
+use WC_Product;
 
 defined('ABSPATH') || exit;
 
@@ -23,17 +23,12 @@ class PriceRules
     private RuleService $rule_service;
     private PricingCalculator  $pricing_calculator;
 
-    private static bool $generating_qty_price = false;
-
     public function __construct(RuleService $rule_service)
     {
         $this->rule_service = $rule_service;
         $this->pricing_calculator = new PricingCalculator();
 
         add_filter('woocommerce_product_is_on_sale', [$this, 'product_is_on_sale'], 999, 2);
-        add_action('woocommerce_before_shop_loop_item', [$this, 'show_discount_banner_shop_archive'], 999);
-        add_filter('flatsome_custom_single_product_1', [$this, 'show_discount_banner_product_page'], 999, 3);
-        add_filter('woocommerce_get_price_html', [$this, 'add_quantity_discount_display'], 999, 2);
         add_filter('woocommerce_product_get_price', [$this, 'get_rule_price'], 20, 2);
         add_filter('woocommerce_product_variation_get_price', [$this, 'get_rule_price'], 20, 2);
         add_filter('woocommerce_product_get_sale_price', [$this, 'get_rule_price'], 20, 2);
@@ -45,45 +40,6 @@ class PriceRules
                 [$this, 'apply_role_pricing_to_cart'],
                 20
         );
-    }
-
-    /**
-     * Modify the price HTML to show quantity discount pricing
-     *
-     * @param string $price_html The existing price HTML from tax plugin
-     * @param WC_Product $product The product object
-     * @return string Modified price HTML
-     */
-    public function add_quantity_discount_display(string $price_html, WC_Product $product): string
-    {
-        if (is_admin() || self::$generating_qty_price || !$this->user_has_rule() || !is_product()) {
-            return $price_html;
-        }
-
-        $rule = $this->rule_service->get_rule_by_current_role();
-        $applicable_quantity_rule = $this->get_quantity_rule($rule, $product);
-
-        if (!$applicable_quantity_rule) {
-            return $price_html;
-        }
-
-        $original_price = $this->pricing_calculator->get_wc_price($product);
-        $cart_quantity = $this->get_cart_item_qty($product->get_id());
-        $qty_discount_price = $applicable_quantity_rule->calculatePrice($original_price, $applicable_quantity_rule->min_quantity);
-
-        if (!$qty_discount_price || $applicable_quantity_rule->quantity_reduction_applies($cart_quantity)) {
-            return $price_html;
-        }
-
-        return $price_html .
-                '<div style="margin: 20px 0; padding: 20px; width: 100%; background-color: #e8e8e8; display: flex; flex-direction: column;">' .
-                '<p style="margin: 0 0 10px 0;">' . esc_html(sprintf(
-                    /* translators: %d: minimum quantity */
-                    __('Unit price when buying %d or more:', 'clyppers-role-based-pricing-for-woocommerce'),
-                    $applicable_quantity_rule->min_quantity
-                )) . '</p>' .
-                '<p class="price product-page-price">' . wc_price($qty_discount_price) . '</p>' .
-                '</div>';
     }
 
     /**
@@ -158,59 +114,6 @@ class PriceRules
         return floatval($rule_price) < $regular_price;
     }
 
-    public function show_discount_banner_shop_archive(): void
-    {
-        $this->show_discount_banner(shortened_message: true);
-    }
-
-    public function show_discount_banner_product_page(): void
-    {
-        $this->show_discount_banner();
-    }
-
-    private function show_discount_banner(bool $shortened_message = false): void
-    {
-        $product = wc_get_product();
-
-        if (!$product) {
-            return;
-        }
-
-        $rule = $this->rule_service->get_rule_by_current_role();
-
-        if (!$rule || !$rule->rule_active) {
-            return;
-        }
-
-        $applicable_quantity_rule = $this->get_quantity_rule($rule, $product);
-
-        if (!$applicable_quantity_rule) {
-            return;
-        }
-
-        $message = $applicable_quantity_rule->quantity_reduction_message();
-
-        if ($shortened_message) {
-            ?>
-            <div class="badge-container absolute right top z-1">
-                <div class="callout badge badge-circle">
-                    <div class="badge-inner secondary on-sale" style="background-color: #e3ad30"><span class="onsale"><?php echo esc_html__( 'Volume discount!', 'clyppers-role-based-pricing-for-woocommerce' ); ?></span>
-                    </div>
-                </div>
-            </div>
-            <?php
-        } else {
-            ?>
-            <div class="badge-container absolute right top z-1">
-                <div class="callout badge badge-circle">
-                    <div class="badge-inner secondary on-sale" style="background-color: #e3ad30"><span
-                                class="onsale"><?php echo wp_kses_post( $message ); ?></span></div>
-                </div>
-            </div>
-            <?php
-        }
-    }
-
     /**
      * Check if user has a role or is guest frontend
      */
@@ -258,18 +161,6 @@ class PriceRules
 
         return $rule->get_applicable_rule($product->get_id(), $category_ids, $cart_qty);
     }
-
-    private function get_quantity_rule(RoleRules $rule, WC_Product $product): ?ItemRule
-    {
-        $category_ids = $this->get_category_ids($product);
-
-        if (is_wp_error($category_ids)) {
-            $category_ids = [];
-        }
-
-        return $rule->get_quantity_rule($product->get_id(), $category_ids);
-    }
-
 
     /**
      * Get cart quantity for a given product.
