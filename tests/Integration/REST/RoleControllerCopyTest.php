@@ -75,6 +75,7 @@ final class RoleControllerCopyTest extends IntegrationTestCase
         $response = $this->request( 'POST', '/crbp/v1/roles/customer/copyFrom', [ 'copy_rule_slug' => 'customer' ] );
 
         $this->assertSame( 400, $response->get_status() );
+        $this->assertSame( 'crbp_copy_to_self', $response->get_data()['code'] );
     }
 
     public static function invalidRequests(): array

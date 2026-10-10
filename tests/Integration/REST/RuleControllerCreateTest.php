@@ -37,6 +37,7 @@ final class RuleControllerCreateTest extends IntegrationTestCase
         $response = $this->request( 'POST', '/crbp/v1/rules', [ 'slug' => 'customer' ] );
 
         $this->assertSame( 409, $response->get_status() );
+        $this->assertSame( 'crbp_rule_exists', $response->get_data()['code'] );
         $this->assertCount( 1, $this->rulePostsFor( 'customer' ) );
     }
 
