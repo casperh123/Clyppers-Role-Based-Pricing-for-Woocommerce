@@ -41,6 +41,13 @@ class RuleService {
     }
 
     /**
+     * Get RoleRules for a role slug
+     */
+    public function get_rule_by_role_slug(string $role_slug): ?RoleRules {
+        return $this->rule_repository->get_rule_by_role_slug($role_slug);
+    }
+
+    /**
      * Get RoleRules by ID
      */
     public function get_rule_by_id(int $rule_id): ?RoleRules {
