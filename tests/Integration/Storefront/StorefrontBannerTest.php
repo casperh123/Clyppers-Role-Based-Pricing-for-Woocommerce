@@ -72,6 +72,76 @@ final class StorefrontBannerTest extends StorefrontTestCase
         $this->assertSame( '', $this->printed( 'loop_badge' ) . $this->printed( 'product_message' ) );
     }
 
+    // Block product lists (Product Collection), on any page
+
+    private const PRODUCT_COLLECTION = '<!-- wp:woocommerce/product-collection {"queryId":1,"query":{"perPage":9,"pages":0,"offset":0,"postType":"product","order":"asc","orderBy":"title","search":"","exclude":[],"inherit":false,"taxQuery":[],"isProductCollectionBlock":true,"woocommerceOnSale":false,"woocommerceStockStatus":["instock","outofstock","onbackorder"],"woocommerceAttributes":[],"woocommerceHandPickedProducts":[]}} -->'
+        . '<div class="wp-block-woocommerce-product-collection"><!-- wp:woocommerce/product-template -->'
+        . '<!-- wp:woocommerce/product-image /--><!-- wp:post-title /--><!-- wp:woocommerce/product-price /-->'
+        . '<!-- /wp:woocommerce/product-template --></div><!-- /wp:woocommerce/product-collection -->';
+
+    /**
+     * Two products with a quantity discount and one without, listed by a Product Collection block.
+     */
+    private function renderBlockList(): string
+    {
+        $this->discountedProduct();
+        $this->product();
+        $this->asCustomer();
+        $this->banner->register();
+
+        return do_blocks( self::PRODUCT_COLLECTION );
+    }
+
+    public function testEveryCardInABlockListGetsTheBadgeAndPriceBox(): void
+    {
+        $html = $this->renderBlockList();
+
+        $this->assertSame( 1, substr_count( $html, 'crbp-badge--short' ) );
+        $this->assertSame( 1, substr_count( $html, 'crbp-qty-price--loop' ) );
+        $this->assertStringContainsString( 'Unit price when buying 3 or more:', self::text( $html ) );
+    }
+
+    public function testLoopHooksFiredInsideABlockListDontAddASecondBanner(): void
+    {
+        // What WooCommerce's block template compatibility layer does on shop pages.
+        $compat = function ( $html, $block, $instance ) {
+            $GLOBALS['product'] = wc_get_product( $instance->context['postId'] );
+            ob_start();
+            do_action( 'woocommerce_before_shop_loop_item_title' );
+            do_action( 'woocommerce_after_shop_loop_item_title' );
+
+            return ob_get_clean() . $html;
+        };
+        add_filter( 'render_block_core/post-title', $compat, 10, 3 );
+
+        $html = $this->renderBlockList();
+
+        $this->assertSame( 1, substr_count( $html, 'crbp-badge--short' ) );
+        $this->assertSame( 1, substr_count( $html, 'crbp-qty-price--loop' ) );
+    }
+
+    public function testLoopHooksWorkAgainAfterABlockList(): void
+    {
+        $product = $this->discountedProduct();
+        $this->renderBlockList();
+        $GLOBALS['product'] = wc_get_product( $product );
+
+        $this->assertSame( 'Volume discount!', self::text( $this->printed( 'loop_badge' ) ) );
+    }
+
+    public function testPriceBlockOutsideAListIsLeftAlone(): void
+    {
+        $product = $this->discountedProduct();
+        $this->asCustomer();
+        $this->banner->register();
+        $block = new \WP_Block(
+            [ 'blockName' => 'woocommerce/product-price', 'attrs' => [], 'innerBlocks' => [], 'innerHTML' => '', 'innerContent' => [] ],
+            [ 'postId' => $product ]
+        );
+
+        $this->assertSame( 'PRICE', $this->banner->append_block_price_box( 'PRICE', [], $block ) );
+    }
+
     // Product page
 
     public function testProductPageShowsTheMessageAndPriceBox(): void
