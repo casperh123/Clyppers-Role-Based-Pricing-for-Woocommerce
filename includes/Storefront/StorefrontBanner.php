@@ -10,12 +10,18 @@ defined('ABSPATH') || exit;
  * Puts the quantity discount on the storefront: a badge and price box on every product in a list, and the full
  * message and price box on the product page.
  *
- * It uses WooCommerce's template hooks, which classic themes call directly and WooCommerce's block templates call
- * through their compatibility layer, so one set of hooks covers both kinds of theme.
+ * Product lists come in two kinds:
+ * - PHP template loops (classic themes, shortcodes): WooCommerce's loop hooks.
+ * - Block lists (Product Collection, in block themes or placed on any page): filters on the Product Image and
+ *   Product Price blocks inside `woocommerce/product-template`. WooCommerce's block templates also fire the loop
+ *   hooks for compatibility, so those are ignored while a block list renders; each card gets the banner once.
  */
 final class StorefrontBanner
 {
     private static bool $booted = false;
+
+    /** How many block product lists are rendering right now (they can be nested). */
+    private int $block_lists = 0;
 
     public function __construct(
         private readonly BannerData $data,
@@ -72,10 +78,19 @@ final class StorefrontBanner
                 add_action($hook[0], [$this, "print_{$piece}"], $hook[1]);
             }
         }
+
+        add_filter('render_block_data', [$this, 'enter_block_list']);
+        add_filter('render_block_woocommerce/product-template', [$this, 'leave_block_list']);
+        add_filter('render_block_woocommerce/product-image', [$this, 'append_block_badge'], 10, 3);
+        add_filter('render_block_woocommerce/product-price', [$this, 'append_block_price_box'], 10, 3);
     }
 
     public function print_loop_badge(): void
     {
+        if ($this->block_lists > 0) {
+            return;
+        }
+
         $view = $this->current_view();
         $html = $view ? $this->renderer->badge($view, self::is_flatsome() ? 'onsale' : '') : '';
 
@@ -84,6 +99,10 @@ final class StorefrontBanner
 
     public function print_loop_price_box(): void
     {
+        if ($this->block_lists > 0) {
+            return;
+        }
+
         $view = $this->current_view();
 
         $this->output($view ? $this->renderer->quantity_price_box($view, 'crbp-qty-price--loop') : '');
@@ -107,6 +126,46 @@ final class StorefrontBanner
         $this->output($view ? $this->renderer->quantity_price_box($view) : '');
     }
 
+    /**
+     * Runs just before a block renders (unlike pre_render_block, only for blocks that really render, so every
+     * enter is matched by leave_block_list).
+     */
+    public function enter_block_list(array $parsed_block): array
+    {
+        if (($parsed_block['blockName'] ?? '') === 'woocommerce/product-template') {
+            $this->block_lists++;
+        }
+
+        return $parsed_block;
+    }
+
+    public function leave_block_list(string $html): string
+    {
+        $this->block_lists = max(0, $this->block_lists - 1);
+
+        return $html;
+    }
+
+    /**
+     * Badge under the image of each product card in a block product list.
+     */
+    public function append_block_badge(string $html, array $block, ?\WP_Block $instance = null): string
+    {
+        $view = $this->block_list_view($instance);
+
+        return $view ? $html . $this->renderer->badge($view) : $html;
+    }
+
+    /**
+     * Price box under the price of each product card in a block product list.
+     */
+    public function append_block_price_box(string $html, array $block, ?\WP_Block $instance = null): string
+    {
+        $view = $this->block_list_view($instance);
+
+        return $view ? $html . $this->renderer->quantity_price_box($view, 'crbp-qty-price--loop') : $html;
+    }
+
     public static function enqueue_on_shop_pages(): void
     {
         if (is_woocommerce() || is_cart()) {
@@ -122,6 +181,22 @@ final class StorefrontBanner
         global $product;
 
         return $product instanceof \WC_Product ? $this->data->for_product($product) : null;
+    }
+
+    /**
+     * The card's product, when the block is part of a block product list (not e.g. the product page's own price).
+     */
+    private function block_list_view(?\WP_Block $instance): ?BannerView
+    {
+        $product_id = $instance->context['postId'] ?? null;
+
+        if ($this->block_lists === 0 || !$product_id) {
+            return null;
+        }
+
+        $product = wc_get_product($product_id);
+
+        return $product ? $this->data->for_product($product) : null;
     }
 
     private function output(string $html): void
