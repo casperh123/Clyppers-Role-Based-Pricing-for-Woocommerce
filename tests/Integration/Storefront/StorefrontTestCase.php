@@ -69,6 +69,13 @@ abstract class StorefrontTestCase extends IntegrationTestCase
         return $product;
     }
 
+    protected function putOnSale( int $product_id, string $sale_price = '90' ): void
+    {
+        $product = wc_get_product( $product_id );
+        $product->set_sale_price( $sale_price );
+        $product->save();
+    }
+
     protected function asCustomer(): void
     {
         $this->loggedInAs( 'customer' );

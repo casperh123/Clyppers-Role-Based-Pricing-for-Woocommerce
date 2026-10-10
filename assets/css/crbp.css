@@ -1,5 +1,5 @@
 /*
- * Clypper's Role Based Pricing for WooCommerce: storefront discount banner.
+ * Clypper's Role Based Pricing for WooCommerce: storefront volume discount.
  *
  * Override the colours from your theme:
  *   :root { --crbp-accent: #c00; --crbp-accent-text: #fff; }
@@ -10,26 +10,23 @@
 	--crbp-box-background: rgba(0, 0, 0, 0.05);
 }
 
-.crbp-badge {
-	display: inline-block;
-	background-color: var(--crbp-accent);
-	color: var(--crbp-accent-text);
-	font-size: 0.875em;
-	font-weight: 600;
-	line-height: 1.4;
-	border-radius: 0.25em;
+/*
+ * The badge reuses the theme's sale badge markup (shape and position); only the colour is ours. !important because
+ * themes style their sale badge with selectors of any specificity (e.g. `.woocommerce ul.products li.product .onsale`).
+ */
+.crbp-volume-badge,
+.crbp-volume-badge-flatsome .badge-inner {
+	background-color: var(--crbp-accent) !important;
+	border-color: var(--crbp-accent) !important;
+	color: var(--crbp-accent-text) !important;
 }
 
-.crbp-badge--short {
-	margin: 0.5em 0;
-	padding: 0.2em 0.6em;
+/* Inline sale badges (e.g. Storefront): keep the two apart when they sit side by side. */
+* + .crbp-volume-badge {
+	margin-left: 0.25em;
 }
 
-.crbp-badge--full {
-	margin: 0 0 1em;
-	padding: 0.4em 0.8em;
-}
-
+/* Product page: "Unit price when buying N or more". */
 .crbp-qty-price {
 	margin: 1em 0;
 	padding: 1em;
@@ -44,29 +41,4 @@
 
 .crbp-qty-price__amount {
 	margin: 0;
-}
-
-/* Compact version under each product in shop and category lists. */
-.crbp-qty-price--loop {
-	margin: 0.5em 0;
-	padding: 0.5em 0.75em;
-	font-size: 0.875em;
-}
-
-.crbp-qty-price--loop .crbp-qty-price__label {
-	font-size: 1em;
-}
-
-/* Flatsome keeps its own badge shape; only the colour comes from here. */
-.crbp-flatsome .badge-inner {
-	background-color: var(--crbp-accent);
-}
-
-.crbp-flatsome .crbp-badge {
-	display: inline;
-	margin: 0;
-	padding: 0;
-	background: none;
-	font-size: inherit;
-	border-radius: 0;
 }
