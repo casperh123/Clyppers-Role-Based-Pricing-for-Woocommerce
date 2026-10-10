@@ -2,6 +2,8 @@
 
 namespace ClypperTechnology\RolePricing;
 
+defined('ABSPATH') || exit;
+
 class PricingCalculator
 {
     public function __construct()

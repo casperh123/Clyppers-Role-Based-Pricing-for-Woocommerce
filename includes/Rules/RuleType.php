@@ -2,6 +2,8 @@
 
 namespace ClypperTechnology\RolePricing\Rules;
 
+defined('ABSPATH') || exit;
+
 enum RuleType: string
 {
     case TYPE_PERCENT = 'percent';

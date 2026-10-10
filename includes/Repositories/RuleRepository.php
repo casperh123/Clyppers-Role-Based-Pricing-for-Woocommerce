@@ -8,6 +8,8 @@ use InvalidArgumentException;
 use RuntimeException;
 use WP_Post;
 
+defined('ABSPATH') || exit;
+
 class RuleRepository
 {
     private RuleCache $rule_cache;
