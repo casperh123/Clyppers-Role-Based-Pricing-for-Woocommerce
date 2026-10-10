@@ -9,9 +9,9 @@
         "exactOptionalPropertyTypes": true,
         "esModuleInterop":            true,
         "resolveJsonModule":          true,
-        "baseUrl":                    ".",
+        "skipLibCheck":               true,
         "paths": {
-            "@/*": ["src/*"]
+            "@/*": ["./src/*"]
         }
     },
     "include": ["src"],

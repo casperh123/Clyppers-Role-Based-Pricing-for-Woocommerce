@@ -13,7 +13,8 @@ export interface ItemSearchProps<T extends SearchItem> {
   displayItem: (item: T) => DisplayItem,
   onItemAdded: (item: T) => void,
   modalTitle: string,
-  addedItems?: Array<T>,
+  // Only compared by id, so it can be the rules already added rather than search results.
+  addedItems?: Array<SearchItem>,
 }
 
 export interface DisplayItem {
