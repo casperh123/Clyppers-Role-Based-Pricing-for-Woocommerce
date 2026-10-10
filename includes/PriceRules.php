@@ -77,7 +77,11 @@ class PriceRules
 
         return $price_html .
                 '<div style="margin: 20px 0; padding: 20px; width: 100%; background-color: #e8e8e8; display: flex; flex-direction: column;">' .
-                '<p style="margin: 0 0 10px 0;"> Stykpris v/ ' . esc_html($applicable_quantity_rule->min_quantity) . '+ stk.:</p>' .
+                '<p style="margin: 0 0 10px 0;">' . esc_html(sprintf(
+                    /* translators: %d: minimum quantity */
+                    __('Unit price when buying %d or more:', 'clyppers-role-based-pricing-for-woocommerce'),
+                    $applicable_quantity_rule->min_quantity
+                )) . '</p>' .
                 '<p class="price product-page-price">' . wc_price($qty_discount_price) . '</p>' .
                 '</div>';
     }
@@ -190,7 +194,7 @@ class PriceRules
             ?>
             <div class="badge-container absolute right top z-1">
                 <div class="callout badge badge-circle">
-                    <div class="badge-inner secondary on-sale" style="background-color: #e3ad30"><span class="onsale">Mængderabat!</span>
+                    <div class="badge-inner secondary on-sale" style="background-color: #e3ad30"><span class="onsale"><?php echo esc_html__( 'Volume discount!', 'clyppers-role-based-pricing-for-woocommerce' ); ?></span>
                     </div>
                 </div>
             </div>

@@ -51,24 +51,28 @@ class ItemRule implements PricingRule
             return null;
         }
 
+        // Markups (PERCENT_ADD, FIXED_ADD) aren't advertised as a discount, so they have no message.
         return match ($this->quantity_rule->type) {
-            RuleType::TYPE_PERCENT => "Køb {$this->min_quantity}+ og spar {$this->quantity_rule->value}%",
+            RuleType::TYPE_PERCENT => sprintf(
+                /* translators: 1: minimum quantity, 2: discount percentage */
+                __('Buy %1$d+ and save %2$s%%', 'clyppers-role-based-pricing-for-woocommerce'),
+                $this->min_quantity,
+                wc_format_localized_decimal($this->quantity_rule->value)
+            ),
 
-            RuleType::TYPE_FIXED =>
-                "Køb {$this->min_quantity}+ og spar " .
-                wc_price(
-                    $this->quantity_rule->value,
-                    ['in_span' => false]
-                ) .
-                " pr. stk.",
+            RuleType::TYPE_FIXED => sprintf(
+                /* translators: 1: minimum quantity, 2: discount per item, formatted as a price */
+                __('Buy %1$d+ and save %2$s per item', 'clyppers-role-based-pricing-for-woocommerce'),
+                $this->min_quantity,
+                wc_price($this->quantity_rule->value, ['in_span' => false])
+            ),
 
-            RuleType::TYPE_FIXED_SET =>
-                "Køb {$this->min_quantity} for " .
-                wc_price(
-                    $this->quantity_rule->value,
-                    ['in_span' => false]
-                ) .
-                " pr. stk.",
+            RuleType::TYPE_FIXED_SET => sprintf(
+                /* translators: 1: minimum quantity, 2: price per item */
+                __('Buy %1$d+ for %2$s per item', 'clyppers-role-based-pricing-for-woocommerce'),
+                $this->min_quantity,
+                wc_price($this->quantity_rule->value, ['in_span' => false])
+            ),
 
             default => null,
         };
