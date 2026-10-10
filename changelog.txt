@@ -12,4 +12,8 @@ Unreleased - version 1.0.0
 * New - Bulk-import all products from a WooCommerce category into a role's rules, with an option to include product variations
 * New - REST API endpoints backing the admin UI for roles, rules, and product/category search
 * New - Full HPOS (High-Performance Order Storage) compatibility declaration
-* New - Discount banner shown on shop archive and product pages when a role-specific or quantity discount is active
+* New - "Volume discount!" badge next to the theme's sale badge on product cards and product pages, for products with a quantity discount for the visitor's role; works with classic and block themes and can be switched off in Settings
+* New - Unit price box under the price on the product page, showing the quantity-break price
+* New - crbp_banner_hooks filter to move or remove the badge and price box, and --crbp-accent CSS variables for the colours
+* New - Settings page in the admin app
+* New - Translation ready: all storefront and admin texts can be translated

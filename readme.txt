@@ -26,9 +26,16 @@ If more than one applies to a product, the most specific one is used: product ru
 
 Each rule can be a percent discount, percent markup, fixed amount discount, fixed amount markup, or a fixed price.
 
-Each rule can also have a minimum quantity. Once a customer's cart quantity for that item reaches it, a different price applies. This price is shown on the product page before the customer reaches that quantity.
+Each rule can also have a minimum quantity. Once a customer's cart quantity for that item reaches it, a different price applies.
 
 There's a built-in "Guest" role for pricing logged-out visitors.
+
+= On your storefront =
+
+* A "Volume discount!" badge next to the sale badge, on product cards and on the product page, for products with a quantity discount for the visitor's role. Hover it to see the offer, e.g. "Buy 3+ for $75.00 per item".
+* A "Unit price when buying 3 or more" box under the price on the product page.
+
+Both work with classic themes and block themes, including Product Collection blocks placed on any page. The badge uses your theme's own sale badge style in your accent colour, and can be switched off under WooCommerce > Role Rules > Settings.
 
 = Dashboard =
 
@@ -36,6 +43,7 @@ There's a built-in "Guest" role for pricing logged-out visitors.
 * Add products or categories to a role's rules
 * Copy a role's rules to other roles
 * Import all products from a category into a role's rules, with or without variations
+* Settings: switch the "Volume discount!" badge on or off
 
 = Compatibility =
 
@@ -84,10 +92,36 @@ Yes.
 
 Yes.
 
+= Does the volume discount badge work with my theme? =
+
+It's placed using WooCommerce's standard template hooks and blocks, so it works with most themes: classic themes such as Storefront, Astra and Kadence, block themes such as Twenty Twenty-Five, and Flatsome. Page builders that draw their own product cards may not show it.
+
+= Can I turn the "Volume discount!" badge off? =
+
+Yes, under WooCommerce > Role Rules > Settings. The unit price box on the product page stays.
+
+= The badge or price box shows in the wrong place. Can I move it? =
+
+Yes, with the `crbp_banner_hooks` filter. Each piece is a WordPress hook and priority; set one to `false` to remove it:
+
+`add_filter( 'crbp_banner_hooks', function ( $hooks ) {
+    $hooks['product_price_box'] = [ 'woocommerce_after_add_to_cart_form', 10 ];
+    return $hooks;
+} );`
+
+The pieces are `loop_badge` (product cards), `product_badge` (product page) and `product_price_box`.
+
+= Can I change the badge colour? =
+
+Yes, with CSS in your theme: `:root { --crbp-accent: #c00; --crbp-accent-text: #fff; }`.
+
 == Screenshots ==
 
 1. Roles overview with pricing status and rule counts.
 2. Product and category pricing for a role.
+3. The "Volume discount!" badge next to the sale badge in the shop.
+4. The badge and unit price box on a product page.
+5. Settings.
 
 == Changelog ==
 

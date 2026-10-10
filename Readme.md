@@ -23,7 +23,14 @@ For each role, the most specific rule wins:
 
 ### Quantity breaks
 
-A rule can include a minimum quantity. Once a customer's cart quantity for an item reaches it, a different price applies. This price is shown on the product page before the customer reaches that quantity.
+A rule can include a minimum quantity. Once a customer's cart quantity for an item reaches it, a different price applies.
+
+### On the storefront
+
+- A "Volume discount!" badge next to the theme's sale badge, on product cards and product pages (can be switched off in Settings)
+- A "Unit price when buying N or more" box under the price on the product page
+
+Placement lives in `includes/Storefront/StorefrontBanner.php` and works with classic and block themes. Move or remove pieces with the `crbp_banner_hooks` filter.
 
 ## Admin features
 
@@ -31,6 +38,7 @@ A rule can include a minimum quantity. Once a customer's cart quantity for an it
 - Search and add products or categories to a role's rules
 - Copy a role's rules to other roles
 - Bulk-import all products from a category into a role's rules, with or without variations
+- Settings: switch the volume discount badge on or off
 
 ## Requirements
 
@@ -44,7 +52,7 @@ A rule can include a minimum quantity. Once a customer's cart quantity for an it
 2. Run `composer install` to install PHP dependencies
 3. Run `npm install && npm run build` to build the admin UI
 4. Activate the plugin in WordPress with WooCommerce active
-5. Go to WooCommerce > Roles & Rules B2B to configure pricing rules
+5. Go to WooCommerce > Role Rules to configure pricing rules
 
 ## Development
 
