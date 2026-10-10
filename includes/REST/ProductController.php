@@ -27,6 +27,8 @@
                         'search' => [
                             'required'          => true,
                             'type'              => 'string',
+                            'minLength'         => 2,
+                            'validate_callback' => 'rest_validate_request_arg',
                             'sanitize_callback' => 'sanitize_text_field',
                         ],
                     ],
@@ -77,9 +79,8 @@
                 return [ ProductDTO::from( $item ) ];
             }
 
-            return array_map( function( $child_id ) {
-                $child = wc_get_product( $child_id );
-                return ProductDTO::from( $child );
-            }, $item->get_children() );
+            $children = array_filter( array_map( 'wc_get_product', $item->get_children() ) );
+
+            return array_values( array_map( fn( WC_Product $child ) => ProductDTO::from( $child ), $children ) );
         }
     }

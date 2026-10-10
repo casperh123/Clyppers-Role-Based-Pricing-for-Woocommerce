@@ -33,6 +33,12 @@ export const ItemSearch = <T extends SearchItem>({
 
 
   const runSearch = (inputValue: string) => {
+    // The products endpoint rejects searches shorter than 2 characters.
+    if (inputValue.trim().length < 2) {
+      setItems([]);
+      return;
+    }
+
     setTransition(async () => {
       const fetchedItems = await searchItems(inputValue);
       const filteredItems = fetchedItems.filter(item => !isAdded(item));
