@@ -22,6 +22,7 @@ use ClypperTechnology\RolePricing\Admin\Admin;
 use ClypperTechnology\RolePricing\REST\ProductController;
 use ClypperTechnology\RolePricing\REST\RoleController;
 use ClypperTechnology\RolePricing\REST\RuleController;
+use ClypperTechnology\RolePricing\REST\SettingsController;
 use ClypperTechnology\RolePricing\PriceRules;
 use ClypperTechnology\RolePricing\Services\RoleService;
 use ClypperTechnology\RolePricing\Services\RuleService;
@@ -65,6 +66,7 @@ add_action( 'rest_api_init', function() use ( $crbp_rule_service, $crbp_role_ser
     ( new ProductController( $namespace ) )->register_routes();
     ( new RuleController( $namespace, $crbp_rule_service, $crbp_role_service ) )->register_routes();
     ( new RoleController( $namespace, $crbp_role_service, $crbp_rule_service ) )->register_routes();
+    ( new SettingsController( $namespace ) )->register_routes();
 });
 
 add_action( 'woocommerce_loaded', function() use ( &$crbp_rule_service, &$crbp_role_service ) {

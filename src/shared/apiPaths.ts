@@ -1,6 +1,10 @@
 import { ApiBase } from "@/types/apiBases"
 
 export class ApiPath {
+  public static settingsPath(): string {
+    return `${ApiBase.Base}${ApiBase.Settings}`
+  }
+
   public static rulesPath(): string {
     return `${ApiBase.Base}${ApiBase.Rules}`
   }
