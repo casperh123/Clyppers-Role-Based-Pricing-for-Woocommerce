@@ -25,7 +25,12 @@ class Rule implements PricingRule
             RuleType::TYPE_FIXED => $original_price - $this->value,
             RuleType::TYPE_FIXED_ADD => $original_price + $this->value,
             RuleType::TYPE_FIXED_SET => $this->value,
+            RuleType::EMPTY => null,
         };
+
+        if ($calculated_price === null) {
+            return null;
+        }
 
         // If calculated price is below 0 and it wasn't intentionally set to 0, return original price
         if ($calculated_price <= 0) {
@@ -36,7 +41,7 @@ class Rule implements PricingRule
     }
 
     public function rule_applies(): bool {
-        return $this->value > 0;
+        return $this->type !== RuleType::EMPTY && $this->value > 0;
     }
 
     public function to_array() : array {
@@ -46,10 +51,20 @@ class Rule implements PricingRule
         ];
     }
 
-    public static function from_array( array $rule ) : Rule {
+    /**
+     * Build a rule from stored or request data. Anything unusable becomes an empty rule that never applies.
+     */
+    public static function from_array( mixed $rule ) : Rule {
+        if ( ! is_array( $rule ) ) {
+            $rule = [];
+        }
+
+        $type  = is_string( $rule['type'] ?? null ) ? RuleType::tryFrom( $rule['type'] ) : null;
+        $value = is_numeric( $rule['value'] ?? null ) ? (float) $rule['value'] : 0.0;
+
         return new Rule(
-            RuleType::from($rule['type'] ?? ""),
-            floatval($rule['value'] ?? 0.0),
+            $type ?? RuleType::EMPTY,
+            max( 0.0, $value ),
         );
     }
 }
